@@ -1,0 +1,19 @@
+<resources>
+    <string name="register_title">Register</string>
+    <string name="register_username_input_title">Username</string>
+    <string name="register_username_input_placeholder">Username</string>
+    <string name="register_email_input_title">Email</string>
+    <string name="register_email_input_placeholder">Email</string>
+    <string name="register_password_input_title">Password</string>
+    <string name="register_password_input_placeholder">Password</string>
+    <string name="register_button">Register</string>
+    <string name="register_login_button">Login</string>
+    <string name="register_anonymous_button">Login anonymously</string>
+    <string name="register_notification_title">Notifications</string>
+    <string name="register_notification_friend_box">Friends</string>
+    <string name="register_notification_fav_box">Favorite stations</string>
+    <string name="register_divider_text">OR</string>
+    <string-array name="register_fuel_type">
+        <item>Gasole</item>
+    </string-array>
+</resources>

@@ -2,16 +2,13 @@ package com.example.android_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class MapOsmActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        this.startActivity(intent);
+        setContentView(R.layout.activity_map_osm);
     }
 }
