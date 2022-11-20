@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapOsmFragment">
+    <fragment
+        android:id="@+id/mapOsmFragment"
+        android:name="com.example.android_project.views.MapOsmFragment"
+        android:label="fragment_map_osm"
+        tools:layout="@layout/fragment_map_osm" />
+    <navigation android:id="@+id/authNavigation"
+        app:startDestination="@id/loginFragment">
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.example.android_project.views.LoginFragment"
+            android:label="fragment_login"
+            tools:layout="@layout/fragment_login">
+            <action
+                android:id="@+id/action_loginFragment_to_registerFragment"
+                app:destination="@id/registerFragment"
+                app:popUpToInclusive="false" />
+        </fragment>
+        <fragment
+            android:id="@+id/registerFragment"
+            android:name="com.example.android_project.views.RegisterFragment"
+            android:label="fragment_register"
+            tools:layout="@layout/fragment_register" >
+            <action
+                android:id="@+id/action_registerFragment_to_loginFragment"
+                app:destination="@id/loginFragment"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_registerFragment_to_registerPart2Fragment"
+                app:destination="@id/registerPart2Fragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/registerPart2Fragment"
+            android:name="com.example.android_project.views.RegisterPart2Fragment"
+            android:label="fragment_register_part2"
+            tools:layout="@layout/fragment_register_part2" />
+    </navigation>
+</navigation>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".views.RegisterFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,109 +34,86 @@
             android:paddingLeft="1dp"
             android:paddingRight="1dp">
 
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="2.5dp"
-                android:paddingEnd="0dp"
-                android:text="@string/register_username_input_title" />
-
             <EditText
+                android:id="@+id/register_et_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="emailAddress"
                 android:ems="10"
                 android:hint="@string/register_username_input_placeholder"
-                android:inputType="textEmailAddress"
+                android:inputType="textNoSuggestions|textPersonName"
                 android:minHeight="48dp"
+                android:importantForAutofill="no"
                 tools:ignore="DuplicateSpeakableTextCheck" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="2.5dp"
-                android:paddingEnd="0dp"
-                android:text="@string/register_email_input_title" />
-
             <EditText
-                android:id="@+id/editTextTextEmailAddress"
+                android:id="@+id/register_et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="emailAddress"
                 android:ems="10"
                 android:hint="@string/register_email_input_placeholder"
+                android:importantForAutofill="no"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 tools:ignore="DuplicateSpeakableTextCheck" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="2.5dp"
-                android:paddingEnd="0dp"
-                android:text="@string/register_password_input_title" />
-
             <EditText
-                android:id="@+id/editTextTextPassword"
+                android:id="@+id/register_et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="password"
                 android:ems="10"
                 android:hint="@string/register_password_input_placeholder"
                 android:inputType="textPassword"
+                android:importantForAutofill="no"
                 android:minHeight="48dp"
                 tools:ignore="DuplicateSpeakableTextCheck" />
 
-            <TextView
-                android:id="@+id/textView6"
+            <EditText
+                android:id="@+id/register_et_confirm_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="2.5dp"
-                android:paddingEnd="0dp"
-                android:text="@string/register_notification_title" />
+                android:autofillHints="password"
+                android:ems="10"
+                android:hint="@string/register_confirm_password_input_placeholder"
+                android:inputType="textNoSuggestions|textPassword"
+                android:importantForAutofill="no"
+                android:minHeight="48dp"
+                tools:ignore="DuplicateSpeakableTextCheck" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/checkBox5"
+                <TextView
+                    android:id="@+id/textView3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/register_notification_friend_box" />
+                    android:gravity="end"
+                    android:text="@string/register_login_text" />
 
-                <CheckBox
-                    android:id="@+id/checkBox6"
+                <Button
+                    android:id="@+id/register_btn_login"
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:text="@string/register_notification_fav_box" />
+                    android:text="@string/register_login_button"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_primary" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
-
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/register_btn_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/register_button"
+            android:text="@string/register_next_button"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <LinearLayout
@@ -171,15 +148,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="onLoginClick"
-            android:text="@string/register_login_button"
-            tools:ignore="DuplicateSpeakableTextCheck" />
-
-        <Button
-            android:id="@+id/button4"
+            android:id="@+id/login_btn_anonymous"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/register_anonymous_button" />
