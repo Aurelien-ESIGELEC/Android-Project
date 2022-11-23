@@ -23,14 +23,6 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // This callback will only be called when MyFragment is at least Started.
-        OnBackPressedCallback callback = new OnBackPressedCallback(false) {
-            @Override
-            public void handleOnBackPressed() {
-
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override

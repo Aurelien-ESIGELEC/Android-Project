@@ -70,7 +70,43 @@ public class UserRemoteDataSource {
         errorCodeLiveData.postValue(null);
     }
 
+    public MutableLiveData<Boolean> isUsernameAlreadyInUse(String username) {
+        MutableLiveData<Boolean> isUsernameAlreadyInUse = new MutableLiveData<>();
+        db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        isUsernameAlreadyInUse.postValue(true);
+                        errorCodeLiveData.postValue(null);
+                    } else {
+                        isUsernameAlreadyInUse.postValue(false);
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
+                    }
+                });
+        return isUsernameAlreadyInUse;
+    }
+
+    public MutableLiveData<Boolean> isEmailAlreadyInUse(String email) {
+        MutableLiveData<Boolean> isEmailAlreadyInUse = new MutableLiveData<>();
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        isEmailAlreadyInUse.postValue(true);
+                        errorCodeLiveData.postValue(null);
+                    } else {
+                        isEmailAlreadyInUse.postValue(false);
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
+                    }
+                });
+        return isEmailAlreadyInUse;
+    }
+
     public MutableLiveData<User> getUserMutableLiveData() {
         return userMutableLiveData;
     }
+
+
 }

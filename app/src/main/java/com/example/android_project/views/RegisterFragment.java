@@ -2,7 +2,6 @@ package com.example.android_project.views;
 
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -11,29 +10,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.view_models.RegisterViewModel;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class RegisterFragment extends Fragment {
 
-    private EditText etUsername;
-    private EditText etEmail;
-    private EditText etPassword;
-    private EditText etConfirmPassword;
+    private TextInputLayout etUsername;
+    private TextInputLayout etEmail;
+    private TextInputLayout etPassword;
+    private TextInputLayout etConfirmPassword;
 
     private RegisterViewModel registerViewModel;
 
@@ -48,38 +45,45 @@ public class RegisterFragment extends Fragment {
         registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
 
         final Observer<Integer> errorEmailObserver = idError -> {
-            Log.e("RegisterFragment", getString(idError));
-            etEmail.setError(getString(idError));
+            if (idError != null) {
+                Log.e("RegisterFragment", getString(idError));
+                etEmail.setError(getString(idError));
+            } else {
+                etEmail.setError(null);
+            }
         };
 
         final Observer<Integer> errorUsernameObserver = idError -> {
-            Log.e("RegisterFragment", getString(idError));
-            etUsername.setError(getString(idError));
+            if (idError != null) {
+                Log.e("RegisterFragment", getString(idError));
+                etUsername.setError(getString(idError));
+            } else {
+                etUsername.setError(null);
+            }
         };
 
         final Observer<Integer> errorPasswordObserver = idError -> {
-            Log.e("RegisterFragment", getString(idError));
-            etPassword.setError(getString(idError));
+            if (idError != null) {
+                Log.e("RegisterFragment", getString(idError));
+                etPassword.setError(getString(idError));
+            } else {
+                etPassword.setError(null);
+            }
         };
 
         final Observer<Integer> errorConfirmPasswordObserver = idError -> {
-            Log.e("RegisterFragment", getString(idError));
-            etConfirmPassword.setError(getString(idError));
+            if (idError != null) {
+                Log.e("RegisterFragment", getString(idError));
+                etConfirmPassword.setError(getString(idError));
+            } else {
+                etConfirmPassword.setError(null);
+            }
         };
 
         registerViewModel.getEmailError().observe(this, errorEmailObserver);
         registerViewModel.getUsernameError().observe(this, errorUsernameObserver);
         registerViewModel.getPasswordError().observe(this, errorPasswordObserver);
         registerViewModel.getConfirmPasswordError().observe(this, errorConfirmPasswordObserver);
-
-        // This callback will only be called when MyFragment is at least Started.
-        OnBackPressedCallback callback = new OnBackPressedCallback(false) {
-            @Override
-            public void handleOnBackPressed() {
-
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -96,21 +100,28 @@ public class RegisterFragment extends Fragment {
         Button btnNext = requireView().findViewById(R.id.register_btn_next);
         btnNext.setOnClickListener(this::onNextClick);
 
-        etEmail.addTextChangedListener(new CustomTextWatcher() {
+        Objects.requireNonNull(etUsername.getEditText()).addTextChangedListener(new CustomTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                registerViewModel.setCurrentUsername(charSequence.toString());
+            }
+        });
+
+        Objects.requireNonNull(etEmail.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 registerViewModel.setCurrentEmail(charSequence.toString());
             }
         });
 
-        etPassword.addTextChangedListener(new CustomTextWatcher() {
+        Objects.requireNonNull(etPassword.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 registerViewModel.setCurrentPassword(charSequence.toString());
             }
         });
 
-        etConfirmPassword.addTextChangedListener(new CustomTextWatcher() {
+        Objects.requireNonNull(etConfirmPassword.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 registerViewModel.hasSamePassword(charSequence.toString());
@@ -126,10 +137,10 @@ public class RegisterFragment extends Fragment {
     }
 
     private boolean isFormEmpty() {
-        return TextUtils.isEmpty(etEmail.getText()) &&
-                TextUtils.isEmpty(etUsername.getText()) &&
-                TextUtils.isEmpty(etPassword.getText()) &&
-                TextUtils.isEmpty(etConfirmPassword.getText());
+        return TextUtils.isEmpty(Objects.requireNonNull(etEmail.getEditText()).getText()) &&
+                TextUtils.isEmpty(Objects.requireNonNull(etUsername.getEditText()).getText()) &&
+                TextUtils.isEmpty(Objects.requireNonNull(etPassword.getEditText()).getText()) &&
+                TextUtils.isEmpty(Objects.requireNonNull(etConfirmPassword.getEditText()).getText());
     }
 
     public void onLoginClick(View view) {
@@ -141,10 +152,19 @@ public class RegisterFragment extends Fragment {
 
     public void onNextClick(View view) {
         if (!isFormEmpty() && isFormCorrectlyFilled()) {
-            NavDirections action =
-                    RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
+            final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
+                if (canBeRegistered) {
+                    NavDirections action =
+                            RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
 
-            Navigation.findNavController(view).navigate(action);
+                    Navigation.findNavController(view).navigate(action);
+                }
+            };
+
+            String username = String.valueOf(Objects.requireNonNull(etUsername.getEditText()).getText());
+            String email = String.valueOf(Objects.requireNonNull(etEmail.getEditText()).getText());
+
+            registerViewModel.canRegisterUser(username,email).observe(this, errorCanBeRegistered);
         }
     }
 }

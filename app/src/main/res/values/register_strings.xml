@@ -1,6 +1,5 @@
 <resources>
     <string name="register_title">Sign-up</string>
-    <string name="register_username_input_title">Username</string>
     <string name="register_username_input_placeholder">Username</string>
     <string name="register_email_input_placeholder">Email</string>
     <string name="register_password_input_placeholder">Password</string>
@@ -14,6 +13,9 @@
     <string name="register_error_not_email">Invalid email</string>
     <string name="register_error_password_not_equals">The password are not equals</string>
     <string name="register_error_password_not_strong">Password not strong enough</string>
+    <string name="register_error_username_not_valid">Username not valid</string>
+    <string name="register_error_username_already_in_use">Username already in use</string>
+    <string name="register_error_email_already_in_use">Email already in use</string>
     <string-array name="register_fuel_type">
         <item>Gasole</item>
     </string-array>

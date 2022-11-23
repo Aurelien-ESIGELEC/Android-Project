@@ -47,6 +47,14 @@ public class UserRepository {
         return this.authenticationDataSource.isLoggedLiveData();
     }
 
+    public MutableLiveData<Boolean> isUsernameAlreadyInUse(String username) {
+        return this.userRemoteDataSource.isUsernameAlreadyInUse(username);
+    }
+
+    public MutableLiveData<Boolean> isEmailAlreadyInUse(String email) {
+        return this.userRemoteDataSource.isEmailAlreadyInUse(email);
+    }
+
     private MutableLiveData<User> getLoggedUserData(String email) {
         MutableLiveData<Boolean> isLogged = this.authenticationDataSource.isLoggedLiveData();
 
