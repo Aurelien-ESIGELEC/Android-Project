@@ -1,7 +1,7 @@
 <resources>
     <string name="login_title">Log-In</string>
-    <string name="login_email_input_placeholder">Email</string>
-    <string name="login_password_input_placeholder">Password</string>
+    <string name="login_email_input_placeholder">Email*</string>
+    <string name="login_password_input_placeholder">Password*</string>
     <string name="login_button">Log-In</string>
     <string name="login_register_text">Don\'t have an account yet?</string>
     <string name="login_register_link">Sign-In</string>

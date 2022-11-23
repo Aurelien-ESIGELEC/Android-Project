@@ -1,9 +1,9 @@
 <resources>
     <string name="register_title">S\'enregistrer</string>
-    <string name="register_username_input_placeholder">Nom d\'utilisateur</string>
-    <string name="register_email_input_placeholder">Email</string>
-    <string name="register_password_input_placeholder">Mot de passe</string>
-    <string name="register_confirm_password_input_placeholder">Confirmer le mot de passe</string>
+    <string name="register_username_input_placeholder">Nom d\'utilisateur*</string>
+    <string name="register_email_input_placeholder">Email*</string>
+    <string name="register_password_input_placeholder">Mot de passe*</string>
+    <string name="register_confirm_password_input_placeholder">Confirmer le mot de passe*</string>
     <string name="register_button">S\'enregistrer</string>
     <string name="register_login_button">Se connecter</string>
     <string name="register_login_text">Vous avez déjà un compte ?</string>
@@ -19,6 +19,7 @@
     <string name="register_error_username_not_valid">Le nom d\'utilsateur est invalide</string>
     <string name="register_error_username_already_in_use">Username already in use</string>
     <string name="register_error_email_already_in_use">Email already in use</string>
+    <string name="login_register_link">S\'enregistrer</string>
     <string-array name="register_fuel_type">
         <item>Gasole</item>
     </string-array>

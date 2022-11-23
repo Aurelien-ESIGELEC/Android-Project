@@ -60,6 +60,7 @@ public class UserRemoteDataSource {
                         userMutableLiveData.postValue(user);
                         errorCodeLiveData.postValue(null);
                     } else {
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
@@ -76,11 +77,18 @@ public class UserRemoteDataSource {
                 .whereEqualTo("username", username)
                 .get()
                 .addOnCompleteListener(task -> {
+
                     if (task.isSuccessful()) {
-                        isUsernameAlreadyInUse.postValue(true);
+                        Log.d("isUsernameAlreadyUsed", "" + username + " : " + (task.getResult().size() != 0));
+                        if (task.getResult().size() != 0) {
+                            isUsernameAlreadyInUse.postValue(true);
+                        } else {
+                            isUsernameAlreadyInUse.postValue(false);
+                        }
+
                         errorCodeLiveData.postValue(null);
                     } else {
-                        isUsernameAlreadyInUse.postValue(false);
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
@@ -94,11 +102,16 @@ public class UserRemoteDataSource {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        isEmailAlreadyInUse.postValue(true);
+                        Log.d("isEmailAlreadyUsed", email + " : " + (task.getResult().size() != 0));
+                        if (task.getResult().size() != 0) {
+                            isEmailAlreadyInUse.postValue(true);
+                        } else {
+                            isEmailAlreadyInUse.postValue(false);
+                        }
                         errorCodeLiveData.postValue(null);
                     } else {
-                        isEmailAlreadyInUse.postValue(false);
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
         return isEmailAlreadyInUse;

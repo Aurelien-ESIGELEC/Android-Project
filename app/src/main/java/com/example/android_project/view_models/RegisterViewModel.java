@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.android_project.R;
 import com.example.android_project.data.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class RegisterViewModel extends ViewModel {
@@ -95,15 +96,15 @@ public class RegisterViewModel extends ViewModel {
     }
 
     private boolean isAStrongPassword(String password) {
-        return password.length() >= 8 &&
+        return password.length() >= 8 /*&&
                 password.matches(".*[A-Z].*") &&
                 password.matches(".*[a-z].*") &&
                 password.matches(".*[0-9].*") &&
-                password.matches(".*[^A-Za-z0-9].*");
+                password.matches(".*[^A-Za-z0-9].*")*/;
     }
 
     private boolean isAValidUsername(String username) {
-        return username.matches("[^A-Za-z0-9]");
+        return username.matches(".*[A-Za-z0-9].*");
     }
 
     public LiveData<Boolean> isUsernameAlreadyInUse(String username) {
@@ -117,13 +118,24 @@ public class RegisterViewModel extends ViewModel {
     public LiveData<Boolean> canRegisterUser(String username, String email) {
         MediatorLiveData<Boolean> canBeRegistered = new MediatorLiveData<>();
 
-        canBeRegistered.addSource(isUsernameAlreadyInUse(username), isAlreadyUsed -> {
+        LiveData<Boolean> isUsernameAlreadyInUse = isUsernameAlreadyInUse(username);
+        LiveData<Boolean> isEmailAlreadyInUse = isEmailAlreadyInUse(email);
+
+        canBeRegistered.addSource(isUsernameAlreadyInUse, isAlreadyUsed -> {
+            canBeRegistered.setValue(
+                    Boolean.FALSE.equals(isUsernameAlreadyInUse.getValue()) &&
+                            Boolean.FALSE.equals(isEmailAlreadyInUse.getValue())
+            );
             if (isAlreadyUsed) {
                 this.errorUsername.setValue(R.string.register_error_username_already_in_use);
             }
         });
 
-        canBeRegistered.addSource(isEmailAlreadyInUse(email), isAlreadyUsed -> {
+        canBeRegistered.addSource(isEmailAlreadyInUse, isAlreadyUsed -> {
+            canBeRegistered.setValue(
+                    Boolean.FALSE.equals(isUsernameAlreadyInUse.getValue()) &&
+                            Boolean.FALSE.equals(isEmailAlreadyInUse.getValue())
+            );
             if (isAlreadyUsed) {
                 this.errorEmail.setValue(R.string.register_error_email_already_in_use);
             }

@@ -89,7 +89,6 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:importantForAutofill="no"
-                app:endIconMode="password_toggle"
                 app:errorEnabled="true"
                 android:hint="@string/register_confirm_password_input_placeholder">
                 <com.google.android.material.textfield.TextInputEditText

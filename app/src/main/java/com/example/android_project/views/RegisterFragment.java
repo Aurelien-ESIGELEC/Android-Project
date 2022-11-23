@@ -14,12 +14,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.view_models.RegisterViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -136,13 +138,6 @@ public class RegisterFragment extends Fragment {
                 TextUtils.isEmpty(etConfirmPassword.getError());
     }
 
-    private boolean isFormEmpty() {
-        return TextUtils.isEmpty(Objects.requireNonNull(etEmail.getEditText()).getText()) &&
-                TextUtils.isEmpty(Objects.requireNonNull(etUsername.getEditText()).getText()) &&
-                TextUtils.isEmpty(Objects.requireNonNull(etPassword.getEditText()).getText()) &&
-                TextUtils.isEmpty(Objects.requireNonNull(etConfirmPassword.getEditText()).getText());
-    }
-
     public void onLoginClick(View view) {
         NavDirections action =
                 RegisterFragmentDirections.actionRegisterFragmentToLoginFragment();
@@ -150,9 +145,29 @@ public class RegisterFragment extends Fragment {
         Navigation.findNavController(view).navigate(action);
     }
 
+    private boolean isFieldEmpty(TextInputLayout et) {
+        if (TextUtils.isEmpty(Objects.requireNonNull(et.getEditText()).getText())) {
+            et.setError(getString(R.string.form_error_required));
+            return true;
+        }
+        et.setError(null);
+        return false;
+    }
+
     public void onNextClick(View view) {
-        if (!isFormEmpty() && isFormCorrectlyFilled()) {
+        boolean isFormNotFilled = isFieldEmpty(etEmail);
+        if (isFieldEmpty(etUsername)) {
+            isFormNotFilled = true;
+        }
+        if (isFieldEmpty(etPassword)) {
+            isFormNotFilled = true;
+        }
+        if (isFieldEmpty(etConfirmPassword)) {
+            isFormNotFilled = true;
+        }
+        if ( !isFormNotFilled && isFormCorrectlyFilled()) {
             final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
+                Log.v("errorCanBeRegistered", ""+ canBeRegistered);
                 if (canBeRegistered) {
                     NavDirections action =
                             RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();

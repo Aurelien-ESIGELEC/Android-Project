@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Android-Project</string>
-    <string name="login_register_link">S\'enregistrer</string>
+    <string name="form_hint_required">*Requis</string>
+    <string name="form_error_required">Ce champ est requis</string>
 </resources>
