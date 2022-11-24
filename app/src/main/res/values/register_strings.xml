@@ -6,9 +6,6 @@
     <string name="register_button">Sign-up</string>
     <string name="register_login_button">Login</string>
     <string name="register_anonymous_button">Login anonymously</string>
-    <string name="register_notification_title">Notifications</string>
-    <string name="register_notification_friend_box">Friends</string>
-    <string name="register_notification_fav_box">Favorite stations</string>
     <string name="register_divider_text">OR</string>
     <string name="register_error_not_email">Invalid email</string>
     <string name="register_error_password_not_equals">The password are not equals</string>
@@ -19,7 +16,4 @@
     <string name="register_login_text">Already have an account ?</string>
     <string name="register_confirm_password_input_placeholder">Confirm password*</string>
     <string name="register_next_button">Next</string>
-    <string-array name="register_fuel_type">
-        <item>Gasole</item>
-    </string-array>
 </resources>

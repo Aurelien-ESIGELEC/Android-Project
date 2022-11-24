@@ -9,9 +9,6 @@
     <string name="register_login_text">Vous avez déjà un compte ?</string>
     <string name="register_anonymous_button">Continuer anonymement</string>
     <string name="register_next_button">Suivant</string>
-    <string name="register_notification_title">Notifications</string>
-    <string name="register_notification_friend_box">Amis</string>
-    <string name="register_notification_fav_box">Station favorites</string>
     <string name="register_divider_text">OR</string>
     <string name="register_error_not_email">Email invalide</string>
     <string name="register_error_password_not_equals">Les mots de passe ne correspondent pas</string>
@@ -20,7 +17,4 @@
     <string name="register_error_username_already_in_use">Username already in use</string>
     <string name="register_error_email_already_in_use">Email already in use</string>
     <string name="login_register_link">S\'enregistrer</string>
-    <string-array name="register_fuel_type">
-        <item>Gasole</item>
-    </string-array>
 </resources>

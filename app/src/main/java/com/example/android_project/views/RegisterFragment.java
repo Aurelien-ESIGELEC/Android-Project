@@ -167,7 +167,6 @@ public class RegisterFragment extends Fragment {
         }
         if ( !isFormNotFilled && isFormCorrectlyFilled()) {
             final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
-                Log.v("errorCanBeRegistered", ""+ canBeRegistered);
                 if (canBeRegistered) {
                     NavDirections action =
                             RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();

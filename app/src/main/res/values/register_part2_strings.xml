@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="register2_notifications_title">Notifications</string>
+    <string name="register2_notification_friend_box">Friends</string>
+    <string name="register2_notification_fav_box">Favorite stations</string>
+    <string name="register2_share_data_title">Data sharing</string>
+    <string name="register2_share_data_public">All users</string>
+    <string name="register2_share_data_private">Only myself</string>
+    <string name="register2_share_data_friends">Friends and me</string>
+    <string-array name="register_fuel_type">
+        <item>Diesel</item>
+        <item>SP95-E10</item>
+        <item>SP95-E5</item>
+        <item>SP98</item>
+        <item>E85</item>
+    </string-array>
+</resources>
