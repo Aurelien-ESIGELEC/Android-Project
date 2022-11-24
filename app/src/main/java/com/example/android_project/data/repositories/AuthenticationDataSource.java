@@ -24,8 +24,6 @@ public class AuthenticationDataSource {
         currentUserLiveData = new MutableLiveData<>();
         isLoggedLiveData = new MutableLiveData<>(false);
 
-        errorCodeLiveData = new MutableLiveData<>();
-
         if (mAuth.getCurrentUser() != null) {
             currentUserLiveData.postValue(mAuth.getCurrentUser());
             isLoggedLiveData.postValue(true);

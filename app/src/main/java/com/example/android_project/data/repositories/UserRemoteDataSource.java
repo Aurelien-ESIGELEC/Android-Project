@@ -117,6 +117,36 @@ public class UserRemoteDataSource {
         return isEmailAlreadyInUse;
     }
 
+    public void isUsernameAlreadyUsed(String username) {
+        db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Map<String, Object> userMap = task
+                                .getResult()
+                                .getDocuments()
+                                .get(0)
+                                .getData();
+
+                        User user = null;
+                        if (userMap != null && !userMap.isEmpty()) {
+                            user = new User(
+                                    (String) userMap.get("username"),
+                                    (String) userMap.get("email"),
+                                    (String) userMap.get("firstName"),
+                                    (String) userMap.get("lastName")
+                            );
+                        }
+
+                        userMutableLiveData.postValue(user);
+                        errorCodeLiveData.postValue(null);
+                    } else {
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
+                    }
+                });
+    }
+
     public MutableLiveData<User> getUserMutableLiveData() {
         return userMutableLiveData;
     }

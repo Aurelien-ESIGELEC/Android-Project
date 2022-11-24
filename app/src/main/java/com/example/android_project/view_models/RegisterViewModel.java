@@ -13,6 +13,7 @@ import com.example.android_project.R;
 import com.example.android_project.data.repositories.UserRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class RegisterViewModel extends ViewModel {
@@ -20,6 +21,8 @@ public class RegisterViewModel extends ViewModel {
     private MutableLiveData<String> email;
     private MutableLiveData<String> username;
     private MutableLiveData<String> password;
+    private MutableLiveData<String> fuel;
+    private MutableLiveData<String> sharing;
 
     private MutableLiveData<Integer> errorEmail;
     private MutableLiveData<Integer> errorUsername;
@@ -32,6 +35,8 @@ public class RegisterViewModel extends ViewModel {
         email = new MutableLiveData<>();
         username = new MutableLiveData<>();
         password = new MutableLiveData<>();
+        fuel = new MutableLiveData<>();
+        sharing = new MutableLiveData<>();
 
         errorEmail = new MutableLiveData<>();
         errorPassword = new MutableLiveData<>();

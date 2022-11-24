@@ -7,7 +7,9 @@
     <string name="register2_share_data_public">All users</string>
     <string name="register2_share_data_private">Only myself</string>
     <string name="register2_share_data_friends">Friends and me</string>
-    <string-array name="register_fuel_type">
+    <string name="register2_fuel_type_title">Fuel type</string>
+    <string name="register2_finish_button">Finish</string>
+    <string-array name="register2_fuel_type">
         <item>Diesel</item>
         <item>SP95-E10</item>
         <item>SP95-E5</item>

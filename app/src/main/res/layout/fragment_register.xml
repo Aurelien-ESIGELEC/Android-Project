@@ -75,6 +75,8 @@
                 app:errorEnabled="true"
                 android:layout_marginBottom="5dp"
                 android:importantForAutofill="no"
+                app:helperTextEnabled="true"
+                app:helperText="@string/register_password_helper"
                 android:hint="@string/register_password_input_placeholder">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
