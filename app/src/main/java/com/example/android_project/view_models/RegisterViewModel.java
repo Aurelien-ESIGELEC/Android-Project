@@ -13,6 +13,7 @@ import com.example.android_project.R;
 import com.example.android_project.data.repositories.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +24,7 @@ public class RegisterViewModel extends ViewModel {
     private MutableLiveData<String> password;
     private MutableLiveData<String> fuel;
     private MutableLiveData<String> sharing;
+    private MutableLiveData<String[]> notifications;
 
     private MutableLiveData<Integer> errorEmail;
     private MutableLiveData<Integer> errorUsername;
@@ -55,7 +57,7 @@ public class RegisterViewModel extends ViewModel {
     }
 
     public void setCurrentPassword(String password) {
-        if (!isAStrongPassword(password)) {
+        if (!isAStrongPassword(password) && !password.isEmpty()) {
             this.errorPassword.setValue(R.string.register_error_password_not_strong);
         } else {
             this.errorPassword.setValue(null);
@@ -70,6 +72,26 @@ public class RegisterViewModel extends ViewModel {
             this.errorUsername.setValue(null);
         }
         this.username.setValue(username);
+    }
+
+    public void setCurrentFuel(String fuel) {
+        this.username.setValue(fuel);
+    }
+
+    public void setCurrentSharing(String sharing) {
+        this.sharing.setValue(sharing);
+    }
+
+    public void setCurrentNotifications(String notification) {
+
+        if (Objects.requireNonNull(this.notifications.getValue()).length > 0) {
+            String[] newArray = Arrays.copyOf(this.notifications.getValue(), this.notifications.getValue().length + 1);
+            newArray[newArray.length - 1] = notification;
+            this.notifications.setValue(newArray);
+        } else {
+            this.notifications.setValue(new String[]{notification});
+        }
+
     }
 
     public LiveData<String> getEmail() {

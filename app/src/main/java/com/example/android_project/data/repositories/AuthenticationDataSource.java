@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class AuthenticationDataSource {
 
     private static final String TAG = "Authentication";
@@ -38,7 +40,7 @@ public class AuthenticationDataSource {
                         isLoggedLiveData.postValue(true);
                         errorCodeLiveData.postValue(null);
                     } else {
-                        errorCodeLiveData.postValue(((FirebaseAuthException) task.getException()).getErrorCode());
+                        errorCodeLiveData.postValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
     }
@@ -51,7 +53,7 @@ public class AuthenticationDataSource {
                         isLoggedLiveData.postValue(true);
                         errorCodeLiveData.postValue(null);
                     } else {
-                        errorCodeLiveData.postValue(((FirebaseAuthException) task.getException()).getErrorCode());
+                        errorCodeLiveData.postValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
     }

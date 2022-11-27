@@ -44,7 +44,7 @@ public class RegisterFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
+        registerViewModel = new ViewModelProvider(requireActivity()).get(RegisterViewModel.class);
 
         final Observer<Integer> errorEmailObserver = idError -> {
             if (idError != null) {
@@ -101,6 +101,18 @@ public class RegisterFragment extends Fragment {
 
         Button btnNext = requireView().findViewById(R.id.register_btn_next);
         btnNext.setOnClickListener(this::onNextClick);
+
+        if (registerViewModel.getEmail() != null ) {
+            Objects.requireNonNull(etEmail.getEditText()).setText(registerViewModel.getEmail().getValue());
+        }
+
+        if (registerViewModel.getUsername() != null ) {
+            Objects.requireNonNull(etUsername.getEditText()).setText(registerViewModel.getUsername().getValue());
+        }
+
+        if (registerViewModel.getPassword() != null ) {
+            registerViewModel.setCurrentPassword("");
+        }
 
         Objects.requireNonNull(etUsername.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
