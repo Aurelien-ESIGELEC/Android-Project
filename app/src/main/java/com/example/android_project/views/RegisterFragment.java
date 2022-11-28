@@ -1,5 +1,9 @@
 package com.example.android_project.views;
 
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,8 +22,7 @@ import android.widget.Button;
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
-import com.example.android_project.view_models.RegisterViewModel;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
@@ -34,7 +37,7 @@ public class RegisterFragment extends Fragment {
     private TextInputLayout etPassword;
     private TextInputLayout etConfirmPassword;
 
-    private RegisterViewModel registerViewModel;
+    private AuthViewModel authViewModel;
 
     public RegisterFragment() {
         super(R.layout.fragment_register);
@@ -44,7 +47,7 @@ public class RegisterFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerViewModel = new ViewModelProvider(requireActivity()).get(RegisterViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
 
         final Observer<Integer> errorEmailObserver = idError -> {
             if (idError != null) {
@@ -82,10 +85,10 @@ public class RegisterFragment extends Fragment {
             }
         };
 
-        registerViewModel.getEmailError().observe(this, errorEmailObserver);
-        registerViewModel.getUsernameError().observe(this, errorUsernameObserver);
-        registerViewModel.getPasswordError().observe(this, errorPasswordObserver);
-        registerViewModel.getConfirmPasswordError().observe(this, errorConfirmPasswordObserver);
+        authViewModel.getEmailError().observe(this, errorEmailObserver);
+        authViewModel.getUsernameError().observe(this, errorUsernameObserver);
+        authViewModel.getPasswordError().observe(this, errorPasswordObserver);
+        authViewModel.getConfirmPasswordError().observe(this, errorConfirmPasswordObserver);
     }
 
     @Override
@@ -105,43 +108,43 @@ public class RegisterFragment extends Fragment {
         Button btnAnonymous = requireView().findViewById(R.id.register_btn_anonymous);
         btnAnonymous.setOnClickListener(this::onAnonymousLoginClick);
 
-        if (registerViewModel.getEmail() != null ) {
-            Objects.requireNonNull(etEmail.getEditText()).setText(registerViewModel.getEmail().getValue());
+        if (authViewModel.getEmail() != null ) {
+            Objects.requireNonNull(etEmail.getEditText()).setText(authViewModel.getEmail().getValue());
         }
 
-        if (registerViewModel.getUsername() != null ) {
-            Objects.requireNonNull(etUsername.getEditText()).setText(registerViewModel.getUsername().getValue());
+        if (authViewModel.getUsername() != null ) {
+            Objects.requireNonNull(etUsername.getEditText()).setText(authViewModel.getUsername().getValue());
         }
 
-        if (registerViewModel.getPassword() != null ) {
-            registerViewModel.setCurrentPassword("");
+        if (authViewModel.getPassword() != null ) {
+            authViewModel.setCurrentPassword("");
         }
 
         Objects.requireNonNull(etUsername.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                registerViewModel.setCurrentUsername(charSequence.toString());
+                authViewModel.setCurrentUsername(charSequence.toString());
             }
         });
 
         Objects.requireNonNull(etEmail.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                registerViewModel.setCurrentEmail(charSequence.toString());
+                authViewModel.setCurrentEmail(charSequence.toString());
             }
         });
 
         Objects.requireNonNull(etPassword.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                registerViewModel.setCurrentPassword(charSequence.toString());
+                authViewModel.setCurrentPassword(charSequence.toString());
             }
         });
 
         Objects.requireNonNull(etConfirmPassword.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                registerViewModel.hasSamePassword(charSequence.toString());
+                authViewModel.hasSamePassword(charSequence.toString());
             }
         });
     }
@@ -183,7 +186,7 @@ public class RegisterFragment extends Fragment {
                 }
             };
 
-            registerViewModel.loginAnonymously().observe(this, observerLoginAnonymous);
+            authViewModel.loginAnonymously().observe(this, observerLoginAnonymous);
         }
 
     }
@@ -200,28 +203,27 @@ public class RegisterFragment extends Fragment {
             isFormNotFilled = true;
         }
 
-        if (Utils.isNetworkUnavailable(requireContext())) {
-            Utils.createSnackbarNoNetwork(
-                    requireView(),
-                    v -> this.onNextClick(view)
-            ).show();
-        } else {
-            if ( !isFormNotFilled && isFormCorrectlyFilled()) {
-                final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
-                    if (canBeRegistered) {
-                        NavDirections action =
-                                RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build();
 
-                        Navigation.findNavController(view).navigate(action);
-                    }
-                };
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) requireContext().getSystemService(ConnectivityManager.class);
+        connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
 
-                String username = String.valueOf(Objects.requireNonNull(etUsername.getEditText()).getText());
-                String email = String.valueOf(Objects.requireNonNull(etEmail.getEditText()).getText());
-
-                registerViewModel.canRegisterUser(username,email).observe(this, errorCanBeRegistered);
+            @Override
+            public void onLost(@NonNull Network network) {
+                super.onLost(network);
+                Utils.createSnackbarNoNetwork(
+                        requireView(),
+                        v -> onNextClick(view)
+                ).show();
             }
-        }
+
+
+        });
 
 
     }

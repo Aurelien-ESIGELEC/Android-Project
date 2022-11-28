@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 public class Utils {
 
     public static boolean isNetworkUnavailable(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(ConnectivityManager.class);
         return !(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected());
     }
 

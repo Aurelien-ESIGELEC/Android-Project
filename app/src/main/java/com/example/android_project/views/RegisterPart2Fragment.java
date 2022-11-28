@@ -19,8 +19,7 @@ import android.widget.RadioGroup;
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
-import com.example.android_project.view_models.RegisterViewModel;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
@@ -30,7 +29,7 @@ import java.util.Objects;
  */
 public class RegisterPart2Fragment extends Fragment {
 
-    private RegisterViewModel registerViewModel;
+    private AuthViewModel authViewModel;
 
     private CheckBox        cbFriendNotification;
     private CheckBox        cbFavoriteNotification;
@@ -46,9 +45,9 @@ public class RegisterPart2Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerViewModel = new ViewModelProvider(requireActivity()).get(RegisterViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
 
-        Log.v("RegisterPart2Fragment", registerViewModel.getEmail().getValue());
+        Log.v("RegisterPart2Fragment", authViewModel.getEmail().getValue());
     }
 
     @Override
@@ -71,7 +70,7 @@ public class RegisterPart2Fragment extends Fragment {
             if (isChecked)
             {
                 // Changes the textview's text to "Checked: example radiobutton text"
-                registerViewModel.setCurrentSharing((String) checkedRadioButton.getText());
+                authViewModel.setCurrentSharing((String) checkedRadioButton.getText());
             }
         });
 
@@ -86,16 +85,16 @@ public class RegisterPart2Fragment extends Fragment {
         Objects.requireNonNull(tilFuelType.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                registerViewModel.hasSamePassword(charSequence.toString());
+                authViewModel.hasSamePassword(charSequence.toString());
             }
         });
     }
 
     private void changeNotificationValues(Boolean isChecked, String text) {
         if (isChecked) {
-            registerViewModel.addNotification(text);
+            authViewModel.addNotification(text);
         } else {
-            registerViewModel.removeNotification(text);
+            authViewModel.removeNotification(text);
         }
     }
 
@@ -112,7 +111,7 @@ public class RegisterPart2Fragment extends Fragment {
                 }
             };
 
-            registerViewModel.registerUser().observe(this, errorIsRegistered);
+            authViewModel.registerUser().observe(this, errorIsRegistered);
         }
     }
 }

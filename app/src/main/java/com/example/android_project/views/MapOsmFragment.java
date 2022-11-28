@@ -1,16 +1,11 @@
 package com.example.android_project.views;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,14 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android_project.R;
-import com.example.android_project.data.models.User;
+import com.example.android_project.view_models.AuthViewModel;
 import com.example.android_project.view_models.UserViewModel;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-
-import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,12 +33,14 @@ public class MapOsmFragment extends Fragment {
 
     private MapView mapView;
     private UserViewModel userViewModel;
+    private AuthViewModel authViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class MapOsmFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         NavController navController = Navigation.findNavController(view);
-        userViewModel.isLogged().observe(getViewLifecycleOwner(), isLogged -> {
+        authViewModel.isLogged().observe(getViewLifecycleOwner(), isLogged -> {
             if (isLogged) {
                 Log.d("MapOsmFragment","User logged");
             } else {
@@ -79,6 +76,13 @@ public class MapOsmFragment extends Fragment {
 
         mapView = requireView().findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
+
+        mapView.setMultiTouchControls(true);
+
+        IMapController mapController = mapView.getController();
+        mapController.setZoom(9.5);
+        GeoPoint startPoint = new GeoPoint(48.8583, 2.2944);
+        mapController.setCenter(startPoint);
     }
 
     @Override

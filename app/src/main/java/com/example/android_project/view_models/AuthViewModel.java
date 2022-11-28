@@ -1,24 +1,20 @@
 package com.example.android_project.view_models;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.User;
 import com.example.android_project.data.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-public class RegisterViewModel extends ViewModel {
+public class AuthViewModel extends ViewModel {
 
     private MutableLiveData<String> email;
     private MutableLiveData<String> username;
@@ -34,7 +30,7 @@ public class RegisterViewModel extends ViewModel {
 
     private UserRepository userRepository;
 
-    public RegisterViewModel() {
+    public AuthViewModel() {
         email = new MutableLiveData<>();
         username = new MutableLiveData<>();
         password = new MutableLiveData<>();
@@ -193,6 +189,10 @@ public class RegisterViewModel extends ViewModel {
 
     public LiveData<Boolean> isEmailAlreadyInUse(String email) {
         return this.userRepository.isEmailAlreadyInUse(email);
+    }
+
+    public LiveData<Boolean> isLogged() {
+        return this.userRepository.isLogged();
     }
 
     public LiveData<Boolean> canRegisterUser(String username, String email) {
