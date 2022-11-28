@@ -17,5 +17,5 @@
     <string name="register_error_username_already_in_use">Username already in use</string>
     <string name="register_error_email_already_in_use">Email already in use</string>
     <string name="register_password_helper">Le mot de passe doit contenir 8 caractère minimum</string>
-    <string name="login_register_link">S\'enregistrer</string>
+    <string name="register_error_no_network">Pas de connexion internet</string>
 </resources>

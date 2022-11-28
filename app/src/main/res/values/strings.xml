@@ -2,6 +2,7 @@
     <string name="app_name">Android-Project</string>
     <string name="form_hint_required">*Required</string>
     <string name="form_error_required">This field is required</string>
+    <string name="app_retry_action">Retry</string>
     <!-- Strings used for fragments for navigation -->
 
 </resources>

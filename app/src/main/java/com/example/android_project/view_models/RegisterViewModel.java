@@ -39,6 +39,7 @@ public class RegisterViewModel extends ViewModel {
         password = new MutableLiveData<>();
         fuel = new MutableLiveData<>();
         sharing = new MutableLiveData<>();
+        notifications = new MutableLiveData<>();
 
         errorEmail = new MutableLiveData<>();
         errorPassword = new MutableLiveData<>();
@@ -82,14 +83,65 @@ public class RegisterViewModel extends ViewModel {
         this.sharing.setValue(sharing);
     }
 
-    public void setCurrentNotifications(String notification) {
+    public void addNotification(String notification) {
 
-        if (Objects.requireNonNull(this.notifications.getValue()).length > 0) {
-            String[] newArray = Arrays.copyOf(this.notifications.getValue(), this.notifications.getValue().length + 1);
-            newArray[newArray.length - 1] = notification;
-            this.notifications.setValue(newArray);
-        } else {
-            this.notifications.setValue(new String[]{notification});
+        if (this.notifications != null) {
+            if (
+                    this.notifications.getValue() != null &&
+                    this.notifications.getValue().length > 0
+            ) {
+                boolean isAlreadyAdded = false;
+                for (int i = 0; i < this.notifications.getValue().length; i++) {
+                    if (this.notifications.getValue()[i].equals(notification)) {
+                        isAlreadyAdded = true;
+                        break;
+                    }
+                }
+
+                if (!isAlreadyAdded) {
+                    String[] newArray = Arrays.copyOf(this.notifications.getValue(), this.notifications.getValue().length + 1);
+                    newArray[newArray.length - 1] = notification;
+                    this.notifications.setValue(newArray);
+                }
+            } else {
+                this.notifications.setValue(new String[]{notification});
+            }
+        }
+
+        if (this.notifications != null && this.notifications.getValue() != null && this.notifications.getValue().length > 0) {
+            Log.v("RegisterViewModel", Arrays.toString(this.notifications.getValue()));
+        }
+
+    }
+
+    public void removeNotification(String notification) {
+        if (
+                this.notifications != null &&
+                this.notifications.getValue() != null
+        ) {
+            if (this.notifications.getValue().length > 1) {
+
+                String[] array = this.notifications.getValue();
+                int index = -1;
+                for (int i = 0; i < array.length; i++) {
+                    if (array[i].equals(notification)) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1) {
+                    System.arraycopy(array, index + 1, array, index, array.length - index - 1);
+                    this.notifications.setValue(array);
+                }
+            }
+
+            if (this.notifications.getValue().length == 1) {
+                this.notifications.setValue(null);
+            }
+        }
+
+        if (this.notifications != null && this.notifications.getValue() != null && this.notifications.getValue().length > 0) {
+            Log.v("RegisterViewModel", Arrays.toString(this.notifications.getValue()));
         }
 
     }

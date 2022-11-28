@@ -14,14 +14,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
+import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.RegisterViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -99,7 +99,7 @@ public class RegisterFragment extends Fragment {
         Button btnRegister = requireView().findViewById(R.id.register_btn_login);
         btnRegister.setOnClickListener(this::onLoginClick);
 
-        Button btnNext = requireView().findViewById(R.id.register_btn_next);
+        Button btnNext = requireView().findViewById(R.id.register2_btn_register);
         btnNext.setOnClickListener(this::onNextClick);
 
         if (registerViewModel.getEmail() != null ) {
@@ -177,20 +177,34 @@ public class RegisterFragment extends Fragment {
         if (isFieldEmpty(etConfirmPassword)) {
             isFormNotFilled = true;
         }
-        if ( !isFormNotFilled && isFormCorrectlyFilled()) {
-            final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
-                if (canBeRegistered) {
-                    NavDirections action =
-                            RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
 
-                    Navigation.findNavController(view).navigate(action);
-                }
-            };
+        if (!Utils.isNetworkUnavailable(requireContext())) {
+            Snackbar.make(
+                    requireView(),
+                    R.string.register_error_no_network,
+                    Snackbar.LENGTH_LONG
+            ).setAction(
+                    R.string.app_retry_action,
+                    v -> this.onNextClick(view)
+            ).show();
+        } else {
+            if ( !isFormNotFilled && isFormCorrectlyFilled()) {
+                final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
+                    if (canBeRegistered) {
+                        NavDirections action =
+                                RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
 
-            String username = String.valueOf(Objects.requireNonNull(etUsername.getEditText()).getText());
-            String email = String.valueOf(Objects.requireNonNull(etEmail.getEditText()).getText());
+                        Navigation.findNavController(view).navigate(action);
+                    }
+                };
 
-            registerViewModel.canRegisterUser(username,email).observe(this, errorCanBeRegistered);
+                String username = String.valueOf(Objects.requireNonNull(etUsername.getEditText()).getText());
+                String email = String.valueOf(Objects.requireNonNull(etEmail.getEditText()).getText());
+
+                registerViewModel.canRegisterUser(username,email).observe(this, errorCanBeRegistered);
+            }
         }
+
+
     }
 }

@@ -101,13 +101,12 @@
                 android:text="@string/register2_fuel_type_title" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/spinner"
+                android:id="@+id/register2_til_fuel_type"
                 style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/register2_til_fuel_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
@@ -119,7 +118,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/register_btn_next"
+            android:id="@+id/register2_btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

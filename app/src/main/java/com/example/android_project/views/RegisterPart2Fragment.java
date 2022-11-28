@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -21,7 +22,9 @@ import android.widget.RadioGroup;
 import com.example.android_project.R;
 import com.example.android_project.data.models.User;
 import com.example.android_project.utils.CustomTextWatcher;
+import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.RegisterViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.Serializable;
@@ -34,9 +37,9 @@ public class RegisterPart2Fragment extends Fragment {
 
     private RegisterViewModel registerViewModel;
 
-    private RadioGroup rgSharing;
-    private CheckBox cbFriendNotification;
-    private CheckBox cbFavoriteNotification;
+    private CheckBox        cbFriendNotification;
+    private CheckBox        cbFavoriteNotification;
+    private RadioGroup      rgSharing;
     private TextInputLayout tilFuelType;
 
 
@@ -61,6 +64,8 @@ public class RegisterPart2Fragment extends Fragment {
         cbFriendNotification = requireView().findViewById(R.id.register2_cb_friends_notification);
         tilFuelType = requireView().findViewById(R.id.register2_til_fuel_type);
 
+        Button btnRegister = requireView().findViewById(R.id.register2_btn_register);
+        btnRegister.setOnClickListener(this::onRegisterClick);
 
         rgSharing.setOnCheckedChangeListener( (radioGroup, radioButtonId) -> {
             // This will get the radiobutton that has changed in its check state
@@ -76,24 +81,12 @@ public class RegisterPart2Fragment extends Fragment {
         });
 
         cbFavoriteNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
-            if (isChecked) {
-                registerViewModel.setCurrentNotifications((String) compoundButton.getText());
-            }
+            changeNotificationValues(isChecked, "favorite stations");
         });
 
-//        Objects.requireNonNull(cbFavoriteNotification.getEditText()).addTextChangedListener(new CustomTextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                registerViewModel.setCurrentEmail(charSequence.toString());
-//            }
-//        });
-//
-//        Objects.requireNonNull(cbFriendNotification.getEditText()).addTextChangedListener(new CustomTextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                registerViewModel.setCurrentPassword(charSequence.toString());
-//            }
-//        });
+        cbFriendNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
+            changeNotificationValues(isChecked, "friends");
+        });
 
         Objects.requireNonNull(tilFuelType.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
@@ -101,5 +94,37 @@ public class RegisterPart2Fragment extends Fragment {
                 registerViewModel.hasSamePassword(charSequence.toString());
             }
         });
+    }
+
+    private void changeNotificationValues(Boolean isChecked, String text) {
+        if (isChecked) {
+            registerViewModel.addNotification(text);
+        } else {
+            registerViewModel.removeNotification(text);
+        }
+    }
+
+    public void onRegisterClick(View view) {
+        if (!Utils.isNetworkUnavailable(requireContext())) {
+            Snackbar.make(
+                    requireView(),
+                    R.string.register_error_no_network,
+                    Snackbar.LENGTH_LONG
+            ).setAction(
+                    R.string.app_retry_action,
+                    v -> this.onRegisterClick(view)
+            ).show();
+        } else {
+//            final Observer<Boolean> errorIsRegistered = canBeRegistered -> {
+//                if (canBeRegistered) {
+//                    NavDirections action =
+//                            RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
+//
+//                    Navigation.findNavController(view).navigate(action);
+//                }
+//            };
+//
+//            registerViewModel.hasRegistedUser().observe(this, errorIsRegistered);
+        }
     }
 }

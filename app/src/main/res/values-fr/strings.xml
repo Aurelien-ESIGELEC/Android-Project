@@ -3,4 +3,5 @@
     <string name="app_name">Android-Project</string>
     <string name="form_hint_required">*Requis</string>
     <string name="form_error_required">Ce champ est requis</string>
+    <string name="app_retry_action">Réessayer</string>
 </resources>
