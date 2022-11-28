@@ -35,6 +35,7 @@ public class UserRemoteDataSource {
         errorCodeLiveData = new MutableLiveData<>();
     }
 
+    /*
     public void getUserData(String email) {
         db.collection("users")
                 .whereEqualTo("email", email)
@@ -64,7 +65,7 @@ public class UserRemoteDataSource {
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
-    }
+    }*/
 
     public void removeUser() {
         userMutableLiveData.postValue(null);
@@ -88,7 +89,7 @@ public class UserRemoteDataSource {
 
                         errorCodeLiveData.postValue(null);
                     } else {
-                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
@@ -117,34 +118,22 @@ public class UserRemoteDataSource {
         return isEmailAlreadyInUse;
     }
 
-    public void isUsernameAlreadyUsed(String username) {
+    public MutableLiveData<Boolean> createUser(User user) {
+        MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
         db.collection("users")
-                .whereEqualTo("username", username)
-                .get()
+                .add(user)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Map<String, Object> userMap = task
-                                .getResult()
-                                .getDocuments()
-                                .get(0)
-                                .getData();
-
-                        User user = null;
-                        if (userMap != null && !userMap.isEmpty()) {
-                            user = new User(
-                                    (String) userMap.get("username"),
-                                    (String) userMap.get("email"),
-                                    (String) userMap.get("firstName"),
-                                    (String) userMap.get("lastName")
-                            );
-                        }
-
-                        userMutableLiveData.postValue(user);
+                        this.userMutableLiveData.setValue(user);
+                        isUserCreated.setValue(true);
                         errorCodeLiveData.postValue(null);
                     } else {
-                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
+                        isUserCreated.setValue(false);
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
+        return isUserCreated;
     }
 
     public MutableLiveData<User> getUserMutableLiveData() {

@@ -1,19 +1,46 @@
 package com.example.android_project.data.models;
 
+import androidx.annotation.NonNull;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class User {
     private String username;
     private String email;
-    private String firstName;
-    private String lastName;
+    private String[] notifications;
+    private String sharing;
     private List<User> friends;
 
-    public User(String username, String email, String firstName, String lastName) {
+    public User(String username, String email, String[] notifications, String sharing) {
         this.username = username;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.notifications = notifications;
+        this.sharing = sharing;
+    }
+
+    public User(String username, String email, String[] notifications, String sharing, List<User> friends) {
+        this.username = username;
+        this.email = email;
+        this.notifications = notifications;
+        this.sharing = sharing;
+        this.friends = friends;
+    }
+
+    public String[] getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(String[] notifications) {
+        this.notifications = notifications;
+    }
+
+    public String getSharing() {
+        return sharing;
+    }
+
+    public void setSharing(String sharing) {
+        this.sharing = sharing;
     }
 
     public String getUsername() {
@@ -32,22 +59,6 @@ public class User {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public List<User> getFriends() {
         return friends;
     }
@@ -56,4 +67,15 @@ public class User {
         this.friends = friends;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", notifications=" + Arrays.toString(notifications) +
+                ", sharing='" + sharing + '\'' +
+                ", friends=" + friends +
+                '}';
+    }
 }

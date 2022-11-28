@@ -1,10 +1,11 @@
 package com.example.android_project.data.repositories;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.data.models.User;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
 
 public class UserRepository {
 
@@ -16,26 +17,40 @@ public class UserRepository {
         this.userRemoteDataSource = new UserRemoteDataSource();
     }
 
-    public Task<AuthResult> login(String email, String password) {
-        return this.authenticationDataSource.login(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        this.userRemoteDataSource.getUserData(email);
+    public LiveData<Boolean> register(User user, String password) {
+        MediatorLiveData<Boolean> isRegistered = new MediatorLiveData<>();
+
+        isRegistered.addSource(
+                this.authenticationDataSource.register(user.getEmail(), password),
+                isRegisteredInAuth -> {
+                    if (isRegisteredInAuth) {
+                        this.userRemoteDataSource.createUser(user);
+                    } else {
+                        isRegistered.setValue(false);
                     }
-                });
+                }
+        );
+
+        isRegistered.addSource(
+                this.userRemoteDataSource.getUserMutableLiveData(),
+                newUser -> {
+                    if (newUser != null) {
+                        isRegistered.setValue(true);
+                    } else {
+                        isRegistered.setValue(false);
+                    }
+                }
+        );
+
+        return isRegistered;
     }
 
-    public Task<AuthResult> anonymousLogin() {
+    public MutableLiveData<Boolean> anonymousLogin() {
         return this.authenticationDataSource.anonymousLogin();
     }
 
-    public Task<AuthResult> register(String email, String password) {
-        return this.authenticationDataSource.register(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        this.userRemoteDataSource.getUserData(email);
-                    }
-                });
+    public MutableLiveData<User> getUser() {
+        return this.userRemoteDataSource.getUserMutableLiveData();
     }
 
     public void logOut() {
@@ -47,6 +62,10 @@ public class UserRepository {
         return this.authenticationDataSource.isLoggedLiveData();
     }
 
+    public MutableLiveData<FirebaseUser> getLoggedAuthUser() {
+        return this.authenticationDataSource.getCurrentUserLiveData();
+    }
+
     public MutableLiveData<Boolean> isUsernameAlreadyInUse(String username) {
         return this.userRemoteDataSource.isUsernameAlreadyInUse(username);
     }
@@ -55,14 +74,14 @@ public class UserRepository {
         return this.userRemoteDataSource.isEmailAlreadyInUse(email);
     }
 
-    private MutableLiveData<User> getLoggedUserData(String email) {
-        MutableLiveData<Boolean> isLogged = this.authenticationDataSource.isLoggedLiveData();
-
-        if (Boolean.TRUE.equals(isLogged.getValue())) {
-            this.userRemoteDataSource.getUserData(email);
-            return this.userRemoteDataSource.getUserMutableLiveData();
-        }
-
-        return new MutableLiveData<>();
-    }
+//    private MutableLiveData<User> getLoggedUserData(String email) {
+//        MutableLiveData<Boolean> isLogged = this.authenticationDataSource.isLoggedLiveData();
+//
+//        if (Boolean.TRUE.equals(isLogged.getValue())) {
+//            this.userRemoteDataSource.getUserData(email);
+//            return this.userRemoteDataSource.getUserMutableLiveData();
+//        }
+//
+//        return new MutableLiveData<>();
+//    }
 }

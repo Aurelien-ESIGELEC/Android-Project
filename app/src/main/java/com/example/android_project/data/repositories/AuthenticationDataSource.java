@@ -14,7 +14,6 @@ import java.util.Objects;
 
 public class AuthenticationDataSource {
 
-    private static final String TAG = "Authentication";
     private FirebaseAuth mAuth;
     private MutableLiveData<FirebaseUser> currentUserLiveData;
     private MutableLiveData<Boolean> isLoggedLiveData;
@@ -25,57 +24,68 @@ public class AuthenticationDataSource {
         mAuth = FirebaseAuth.getInstance();
         currentUserLiveData = new MutableLiveData<>();
         isLoggedLiveData = new MutableLiveData<>(false);
+        errorCodeLiveData = new MutableLiveData<>();
 
         if (mAuth.getCurrentUser() != null) {
-            currentUserLiveData.postValue(mAuth.getCurrentUser());
-            isLoggedLiveData.postValue(true);
+            currentUserLiveData.setValue(mAuth.getCurrentUser());
+            isLoggedLiveData.setValue(true);
         }
     }
 
-    public Task<AuthResult> register(String email, String password) {
-        return mAuth.createUserWithEmailAndPassword(email, password)
+    public MutableLiveData<Boolean> register(String email, String password) {
+        MutableLiveData<Boolean> isRegistered = new MutableLiveData<>();
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        currentUserLiveData.postValue(mAuth.getCurrentUser());
-                        isLoggedLiveData.postValue(true);
-                        errorCodeLiveData.postValue(null);
+                        currentUserLiveData.setValue(mAuth.getCurrentUser());
+                        isLoggedLiveData.setValue(true);
+                        isRegistered.setValue(true);
+                        errorCodeLiveData.setValue(null);
                     } else {
-                        errorCodeLiveData.postValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
+                        isRegistered.setValue(false);
+                        isLoggedLiveData.setValue(false);
+                        errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
+        return isRegistered;
     }
 
-    public Task<AuthResult> anonymousLogin() {
-        return mAuth.signInAnonymously()
+    public MutableLiveData<Boolean> anonymousLogin() {
+        MutableLiveData<Boolean> isLogged = new MutableLiveData<>();
+        mAuth.signInAnonymously()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        currentUserLiveData.postValue(mAuth.getCurrentUser());
-                        isLoggedLiveData.postValue(true);
-                        errorCodeLiveData.postValue(null);
+                        currentUserLiveData.setValue(mAuth.getCurrentUser());
+                        isLoggedLiveData.setValue(true);
+                        errorCodeLiveData.setValue(null);
+                        isLogged.setValue(true);
                     } else {
-                        errorCodeLiveData.postValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
+                        isLogged.setValue(false);
+                        isLoggedLiveData.setValue(false);
+                        errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
+        return isLogged;
     }
 
     public Task<AuthResult> login(String email, String password) {
         return mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        currentUserLiveData.postValue(mAuth.getCurrentUser());
-                        isLoggedLiveData.postValue(true);
-                        errorCodeLiveData.postValue(null);
+                        currentUserLiveData.setValue(mAuth.getCurrentUser());
+                        isLoggedLiveData.setValue(true);
+                        errorCodeLiveData.setValue(null);
                     } else {
-                        errorCodeLiveData.postValue(((FirebaseAuthException) task.getException()).getErrorCode());
+                        errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
     }
 
     public void logOut() {
         mAuth.signOut();
-        isLoggedLiveData.postValue(false);
-        currentUserLiveData.postValue(null);
-        errorCodeLiveData.postValue(null);
+        isLoggedLiveData.setValue(false);
+        currentUserLiveData.setValue(null);
+        errorCodeLiveData.setValue(null);
     }
 
     public MutableLiveData<Boolean> isLoggedLiveData() {

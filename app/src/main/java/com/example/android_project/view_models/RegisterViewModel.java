@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android_project.R;
+import com.example.android_project.data.models.User;
 import com.example.android_project.data.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class RegisterViewModel extends ViewModel {
         if (this.notifications != null) {
             if (
                     this.notifications.getValue() != null &&
-                    this.notifications.getValue().length > 0
+                            this.notifications.getValue().length > 0
             ) {
                 boolean isAlreadyAdded = false;
                 for (int i = 0; i < this.notifications.getValue().length; i++) {
@@ -224,11 +225,31 @@ public class RegisterViewModel extends ViewModel {
         return canBeRegistered;
     }
 
+    public LiveData<User> getUser() {
+        return this.userRepository.getUser();
+    }
+
+    public LiveData<Boolean> registerUser() {
+
+        User user = new User(
+                username.getValue(),
+                email.getValue(),
+                notifications.getValue(),
+                sharing.getValue()
+        );
+
+        return this.userRepository.register(user, password.getValue());
+    }
+
     public void hasSamePassword(String confirmPassword) {
         if (!Objects.equals(password.getValue(), confirmPassword)) {
             this.errorConfirmPassword.setValue(R.string.register_error_password_not_equals);
         } else {
             this.errorConfirmPassword.setValue(null);
         }
+    }
+
+    public LiveData<Boolean> loginAnonymously() {
+        return this.userRepository.anonymousLogin();
     }
 }

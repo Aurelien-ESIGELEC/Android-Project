@@ -128,7 +128,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/register2_btn_register"
+            android:id="@+id/register_btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/register_next_button"
@@ -166,7 +166,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/login_btn_anonymous"
+            android:id="@+id/register_btn_anonymous"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/register_anonymous_button" />

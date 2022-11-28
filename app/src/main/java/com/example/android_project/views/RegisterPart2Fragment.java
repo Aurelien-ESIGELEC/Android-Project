@@ -7,27 +7,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.android_project.R;
-import com.example.android_project.data.models.User;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.RegisterViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -64,7 +59,7 @@ public class RegisterPart2Fragment extends Fragment {
         cbFriendNotification = requireView().findViewById(R.id.register2_cb_friends_notification);
         tilFuelType = requireView().findViewById(R.id.register2_til_fuel_type);
 
-        Button btnRegister = requireView().findViewById(R.id.register2_btn_register);
+        Button btnRegister = requireView().findViewById(R.id.register_btn_register);
         btnRegister.setOnClickListener(this::onRegisterClick);
 
         rgSharing.setOnCheckedChangeListener( (radioGroup, radioButtonId) -> {
@@ -105,26 +100,19 @@ public class RegisterPart2Fragment extends Fragment {
     }
 
     public void onRegisterClick(View view) {
-        if (!Utils.isNetworkUnavailable(requireContext())) {
-            Snackbar.make(
+        if (Utils.isNetworkUnavailable(requireContext())) {
+            Utils.createSnackbarNoNetwork(
                     requireView(),
-                    R.string.register_error_no_network,
-                    Snackbar.LENGTH_LONG
-            ).setAction(
-                    R.string.app_retry_action,
                     v -> this.onRegisterClick(view)
             ).show();
         } else {
-//            final Observer<Boolean> errorIsRegistered = canBeRegistered -> {
-//                if (canBeRegistered) {
-//                    NavDirections action =
-//                            RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
-//
-//                    Navigation.findNavController(view).navigate(action);
-//                }
-//            };
-//
-//            registerViewModel.hasRegistedUser().observe(this, errorIsRegistered);
+            final Observer<Boolean> errorIsRegistered = canBeRegistered -> {
+                if (canBeRegistered) {
+                    NavHostFragment.findNavController(this).navigate(R.id.loginFragment);
+                }
+            };
+
+            registerViewModel.registerUser().observe(this, errorIsRegistered);
         }
     }
 }

@@ -99,8 +99,11 @@ public class RegisterFragment extends Fragment {
         Button btnRegister = requireView().findViewById(R.id.register_btn_login);
         btnRegister.setOnClickListener(this::onLoginClick);
 
-        Button btnNext = requireView().findViewById(R.id.register2_btn_register);
+        Button btnNext = requireView().findViewById(R.id.register_btn_register);
         btnNext.setOnClickListener(this::onNextClick);
+
+        Button btnAnonymous = requireView().findViewById(R.id.register_btn_anonymous);
+        btnAnonymous.setOnClickListener(this::onAnonymousLoginClick);
 
         if (registerViewModel.getEmail() != null ) {
             Objects.requireNonNull(etEmail.getEditText()).setText(registerViewModel.getEmail().getValue());
@@ -166,6 +169,25 @@ public class RegisterFragment extends Fragment {
         return false;
     }
 
+    public void onAnonymousLoginClick(View view) {
+        if (Utils.isNetworkUnavailable(requireContext())) {
+            Utils.createSnackbarNoNetwork(
+                    requireView(),
+                    v -> this.onAnonymousLoginClick(view)
+            ).show();
+        } else {
+            final Observer<Boolean> observerLoginAnonymous = isLogged -> {
+                if (isLogged) {
+//                    Log.v("RegisterFragment", )
+                    Navigation.findNavController(view).navigate(R.id.mapOsmFragment);
+                }
+            };
+
+            registerViewModel.loginAnonymously().observe(this, observerLoginAnonymous);
+        }
+
+    }
+
     public void onNextClick(View view) {
         boolean isFormNotFilled = isFieldEmpty(etEmail);
         if (isFieldEmpty(etUsername)) {
@@ -178,13 +200,9 @@ public class RegisterFragment extends Fragment {
             isFormNotFilled = true;
         }
 
-        if (!Utils.isNetworkUnavailable(requireContext())) {
-            Snackbar.make(
+        if (Utils.isNetworkUnavailable(requireContext())) {
+            Utils.createSnackbarNoNetwork(
                     requireView(),
-                    R.string.register_error_no_network,
-                    Snackbar.LENGTH_LONG
-            ).setAction(
-                    R.string.app_retry_action,
                     v -> this.onNextClick(view)
             ).show();
         } else {
