@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/hamburger"
-        android:title="TODO" />
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/account_circle"
+        android:title="account"
+        app:showAsAction="ifRoom"/>
 </menu>

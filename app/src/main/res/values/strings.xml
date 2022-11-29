@@ -4,6 +4,5 @@
     <string name="form_error_required">This field is required</string>
     <string name="app_retry_action">Retry</string>
     <string name="app_error_no_network">No internet connexion</string>
-    <!-- Strings used for fragments for navigation -->
 
 </resources>

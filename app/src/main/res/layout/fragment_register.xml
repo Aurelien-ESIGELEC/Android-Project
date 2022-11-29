@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="10dp"
@@ -33,51 +33,54 @@
             android:paddingLeft="1dp"
             android:paddingRight="1dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputFilledStyle"
-            android:id="@+id/register_et_username"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            app:errorEnabled="true"
-            android:layout_marginBottom="5dp"
-            android:importantForAutofill="no"
-            android:hint="@string/register_username_input_placeholder">
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/register_et_username"
+                style="?attr/textInputFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:inputType="textNoSuggestions|textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="5dp"
+                android:hint="@string/register_username_input_placeholder"
+                android:importantForAutofill="no"
+                app:errorEnabled="true">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/register_et_email"
-            style="?attr/textInputFilledStyle"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="5dp"
-            android:importantForAutofill="no"
-            app:errorEnabled="true"
-            android:hint="@string/register_email_input_placeholder">
-            <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textNoSuggestions|textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/register_et_email"
+                style="?attr/textInputFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="5dp"
+                android:hint="@string/register_email_input_placeholder"
+                android:importantForAutofill="no"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_et_password"
                 style="?attr/textInputFilledStyle"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:hint="@string/register_password_input_placeholder"
+                android:importantForAutofill="no"
                 app:endIconMode="password_toggle"
                 app:errorEnabled="true"
-                android:layout_marginBottom="5dp"
-                android:importantForAutofill="no"
-                app:helperTextEnabled="true"
                 app:helperText="@string/register_password_helper"
-                android:hint="@string/register_password_input_placeholder">
+                app:helperTextEnabled="true">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,16 +91,18 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_et_confirm_password"
                 style="?attr/textInputFilledStyle"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/register_confirm_password_input_placeholder"
                 android:importantForAutofill="no"
-                app:errorEnabled="true"
-                android:hint="@string/register_confirm_password_input_placeholder">
+                app:errorEnabled="true">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:autofillHints="password"
-                    android:inputType="textNoSuggestions|textPassword" />
+                    android:inputType="textNoSuggestions|textPassword"
+                    tools:ignore="TouchTargetSizeCheck" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -134,42 +139,12 @@
             android:text="@string/register_next_button"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
-        <LinearLayout
+        <fragment
+            android:id="@+id/viewer"
+            android:name="com.example.android_project.views.AnonymousLoginFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/login_divider_text"
-                android:textAlignment="center" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="?android:attr/listDivider" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/register_btn_anonymous"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/register_anonymous_button" />
+            tools:ignore="FragmentTagUsage" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

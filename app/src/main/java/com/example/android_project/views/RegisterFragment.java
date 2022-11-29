@@ -23,6 +23,7 @@ import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
@@ -105,9 +106,6 @@ public class RegisterFragment extends Fragment {
         Button btnNext = requireView().findViewById(R.id.register_btn_register);
         btnNext.setOnClickListener(this::onNextClick);
 
-        Button btnAnonymous = requireView().findViewById(R.id.register_btn_anonymous);
-        btnAnonymous.setOnClickListener(this::onAnonymousLoginClick);
-
         if (authViewModel.getEmail() != null ) {
             Objects.requireNonNull(etEmail.getEditText()).setText(authViewModel.getEmail().getValue());
         }
@@ -172,25 +170,6 @@ public class RegisterFragment extends Fragment {
         return false;
     }
 
-    public void onAnonymousLoginClick(View view) {
-        if (Utils.isNetworkUnavailable(requireContext())) {
-            Utils.createSnackbarNoNetwork(
-                    requireView(),
-                    v -> this.onAnonymousLoginClick(view)
-            ).show();
-        } else {
-            final Observer<Boolean> observerLoginAnonymous = isLogged -> {
-                if (isLogged) {
-//                    Log.v("RegisterFragment", )
-                    Navigation.findNavController(view).navigate(R.id.mapOsmFragment);
-                }
-            };
-
-            authViewModel.loginAnonymously().observe(this, observerLoginAnonymous);
-        }
-
-    }
-
     public void onNextClick(View view) {
         boolean isFormNotFilled = isFieldEmpty(etEmail);
         if (isFieldEmpty(etUsername)) {
@@ -203,28 +182,27 @@ public class RegisterFragment extends Fragment {
             isFormNotFilled = true;
         }
 
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .build();
+        if (Utils.isNetworkUnavailable(requireContext())) {
+            Utils.createSnackbarNoNetwork(
+                requireView(),
+                v -> this.onNextClick(view)
+            ).show();
+        } else {
+            if ( !isFormNotFilled && isFormCorrectlyFilled()) {
+                final Observer<Boolean> errorCanBeRegistered = canBeRegistered -> {
+                    if (canBeRegistered) {
+                        NavDirections action =
+                                RegisterFragmentDirections.actionRegisterFragmentToRegisterPart2Fragment();
 
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) requireContext().getSystemService(ConnectivityManager.class);
-        connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
+                        Navigation.findNavController(view).navigate(action);
+                    }
+                };
 
-            @Override
-            public void onLost(@NonNull Network network) {
-                super.onLost(network);
-                Utils.createSnackbarNoNetwork(
-                        requireView(),
-                        v -> onNextClick(view)
-                ).show();
+                String username = String.valueOf(Objects.requireNonNull(etUsername.getEditText()).getText());
+                String email = String.valueOf(Objects.requireNonNull(etEmail.getEditText()).getText());
+
+                authViewModel.canRegisterUser(username,email).observe(this, errorCanBeRegistered);
             }
-
-
-        });
-
-
+        }
     }
 }

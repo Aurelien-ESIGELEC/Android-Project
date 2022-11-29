@@ -1,22 +1,13 @@
-package com.example.android_project.data.repositories;
+package com.example.android_project.data.repositories.data_sources.user;
 
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.android_project.data.models.User;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.android_project.data.models.user.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class UserRemoteDataSource {

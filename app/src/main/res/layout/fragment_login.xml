@@ -99,44 +99,12 @@
             android:layout_height="wrap_content"
             android:text="@string/login_button" />
 
-        <LinearLayout
+        <fragment
+            android:id="@+id/viewer"
+            android:name="com.example.android_project.views.AnonymousLoginFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/login_divider_text"
-                android:textAlignment="center"
-                android:textAllCaps="true" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="?android:attr/listDivider" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/register_btn_anonymous"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login_anonymous_button" />
+            tools:ignore="FragmentTagUsage" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

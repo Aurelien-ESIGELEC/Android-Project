@@ -14,21 +14,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.appbar.AppBarLayout
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/search_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:menu="@menu/osm_top_bar_menu"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.search.SearchView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_anchor="@id/search_bar">
         <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
     </com.google.android.material.search.SearchView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchorGravity="top|end"
+        app:useCompatPadding="true"
+        android:layout_gravity="top"
+        app:layout_anchor="@id/standard_bottom_sheet"
+        android:layout_margin="16dp"
+        android:contentDescription="description"
+        app:srcCompat="@drawable/my_location"/>
+
+    <FrameLayout
+        android:id="@+id/standard_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        app:behavior_hideable="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

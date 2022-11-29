@@ -1,10 +1,18 @@
 package com.example.android_project.views;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -24,16 +32,23 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapOsmFragment extends Fragment {
+public class MapOsmFragment extends Fragment implements LocationListener {
+
+    private static final int PERMISSION_GPS=100;
 
     private MapView mapView;
     private UserViewModel userViewModel;
     private AuthViewModel authViewModel;
+
+    private Marker userMarker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,27 +77,52 @@ public class MapOsmFragment extends Fragment {
             }
         });
 
-        //handle permissions first, before map is created. not depicted here
+        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_GPS
+            );
+        } else {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5, 0, MapOsmFragment.this);
+        }
 
         //load/initialize the osmdroid configuration, this can be done
         Context ctx = requireContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        //setting this before the layout is inflated is a good idea
-        //it 'should' ensure that the map has a writable location for the map cache, even without permissions
-        //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
-        //see also StorageUtils
-        //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's
-        //tile servers will get you banned based on this string
 
         mapView = requireView().findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
 
         mapView.setMultiTouchControls(true);
+        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+
+        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(mapView);
+        mRotationGestureOverlay.setEnabled(true);
+        mapView.setMultiTouchControls(true);
+        mapView.getOverlays().add(mRotationGestureOverlay);
 
         IMapController mapController = mapView.getController();
         mapController.setZoom(9.5);
         GeoPoint startPoint = new GeoPoint(48.8583, 2.2944);
         mapController.setCenter(startPoint);
+
+        this.userMarker = new Marker(mapView);
+        this.userMarker.setIcon(AppCompatResources.getDrawable(requireContext(), R.drawable.person_pin_circle));
+        this.userMarker.setPosition(startPoint);
+        mapView.getOverlays().add(userMarker);
+
+        mapView.invalidate();
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        if (this.userMarker != null) {
+            userMarker.setPosition(
+                    new GeoPoint(location.getLatitude(), location.getLongitude())
+            );
+        }
     }
 
     @Override

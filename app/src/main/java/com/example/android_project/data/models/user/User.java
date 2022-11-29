@@ -1,4 +1,4 @@
-package com.example.android_project.data.models;
+package com.example.android_project.data.models.user;
 
 import androidx.annotation.NonNull;
 

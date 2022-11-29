@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android_project.R;
-import com.example.android_project.data.models.User;
+import com.example.android_project.data.models.user.User;
 import com.example.android_project.data.repositories.UserRepository;
 
 import java.util.Arrays;
