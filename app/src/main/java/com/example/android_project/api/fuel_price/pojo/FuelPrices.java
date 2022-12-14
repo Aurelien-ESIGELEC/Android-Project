@@ -4,7 +4,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FuelPrice {
+public class FuelPrices {
 
     @SerializedName("nhits")
     @Expose
@@ -40,4 +40,12 @@ public class FuelPrice {
         this.records = records;
     }
 
+    @Override
+    public String toString() {
+        return "FuelPrices{" +
+                "nhits=" + nhits +
+                ", parameters=" + parameters +
+                ", records=" + records +
+                '}';
+    }
 }
