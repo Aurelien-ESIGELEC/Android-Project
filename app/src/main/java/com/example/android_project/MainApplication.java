@@ -11,8 +11,6 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Log.v("MainApplication", String.valueOf(DynamicColors.isDynamicColorAvailable()));
-
         DynamicColors.applyToActivitiesIfAvailable(this);
     }
 }

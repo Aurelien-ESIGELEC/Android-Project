@@ -68,17 +68,22 @@ public class AuthenticationDataSource {
         return isLogged;
     }
 
-    public Task<AuthResult> login(String email, String password) {
-        return mAuth.signInWithEmailAndPassword(email, password)
+    public MutableLiveData<Boolean> login(String email, String password) {
+        MutableLiveData<Boolean> isLogged = new MutableLiveData<>();
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currentUserLiveData.setValue(mAuth.getCurrentUser());
                         isLoggedLiveData.setValue(true);
                         errorCodeLiveData.setValue(null);
+                        isLogged.setValue(true);
                     } else {
+                        isLogged.setValue(false);
+                        isLoggedLiveData.setValue(false);
                         errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
                     }
                 });
+        return isLogged;
     }
 
     public void logOut() {

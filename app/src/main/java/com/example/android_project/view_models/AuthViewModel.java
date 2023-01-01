@@ -42,7 +42,23 @@ public class AuthViewModel extends ViewModel {
         errorPassword = new MutableLiveData<>();
         errorUsername = new MutableLiveData<>();
         errorConfirmPassword = new MutableLiveData<>();
+
         userRepository = new UserRepository();
+    }
+
+    public void resetError() {
+        errorPassword.setValue(null);
+        errorEmail.setValue(null);
+        errorUsername.setValue(null);
+        errorConfirmPassword.setValue(null);
+    }
+
+    public void resetPasswordError() {
+        errorPassword.setValue(null);
+    }
+
+    public void resetPassword() {
+        password.setValue(null);
     }
 
     public void setCurrentEmail(String email) {
@@ -54,7 +70,7 @@ public class AuthViewModel extends ViewModel {
         this.email.setValue(email);
     }
 
-    public void setCurrentPassword(String password) {
+    public void setCurrentRegisterPassword(String password) {
         if (!isAStrongPassword(password) && !password.isEmpty()) {
             this.errorPassword.setValue(R.string.register_error_password_not_strong);
         } else {
@@ -63,7 +79,7 @@ public class AuthViewModel extends ViewModel {
         this.password.setValue(password);
     }
 
-    public void setCurrentUsername(String username) {
+    public void setCurrentRegisterUsername(String username) {
         if (!isAValidUsername(username)) {
             this.errorUsername.setValue(R.string.register_error_username_not_valid);
         } else {
@@ -85,7 +101,7 @@ public class AuthViewModel extends ViewModel {
         if (this.notifications != null) {
             if (
                     this.notifications.getValue() != null &&
-                            this.notifications.getValue().length > 0
+                    this.notifications.getValue().length > 0
             ) {
                 boolean isAlreadyAdded = false;
                 for (int i = 0; i < this.notifications.getValue().length; i++) {
@@ -195,6 +211,38 @@ public class AuthViewModel extends ViewModel {
         return this.userRepository.isLogged();
     }
 
+    public LiveData<Boolean> loginUser() {
+        MediatorLiveData<Boolean> isLogged = new MediatorLiveData<>();
+
+        MutableLiveData<Boolean> isEmailAlreadyInUse = this.userRepository.isEmailAlreadyInUse(email.getValue());
+        MutableLiveData<Boolean> isLoggedInApp = this.userRepository.isLogged();
+
+        isLogged.addSource(isEmailAlreadyInUse, isAlreadyUsed -> {
+            if (!isAlreadyUsed) {
+                this.errorEmail.setValue(R.string.login_error_email_no_account);
+                isLogged.setValue(false);
+                this.userRepository.login(
+                    email.getValue(),
+                    password.getValue()
+                );
+            } else {
+                this.errorEmail.setValue(null);
+            }
+        });
+
+        isLogged.addSource(isLoggedInApp, logged -> {
+            if (logged) {
+                isLogged.setValue(true);
+                this.errorPassword.setValue(null);
+            } else {
+                isLogged.setValue(false);
+                this.errorPassword.setValue(R.string.login_error_wrong_password);
+            }
+        });
+
+        return isLogged;
+    }
+
     public LiveData<Boolean> canRegisterUser(String username, String email) {
         MediatorLiveData<Boolean> canBeRegistered = new MediatorLiveData<>();
 
@@ -208,6 +256,8 @@ public class AuthViewModel extends ViewModel {
             );
             if (isAlreadyUsed) {
                 this.errorUsername.setValue(R.string.register_error_username_already_in_use);
+            } else {
+                this.errorUsername.setValue(null);
             }
         });
 
@@ -218,6 +268,8 @@ public class AuthViewModel extends ViewModel {
             );
             if (isAlreadyUsed) {
                 this.errorEmail.setValue(R.string.register_error_email_already_in_use);
+            } else {
+                this.errorEmail.setValue(null);
             }
 
         });
@@ -234,7 +286,7 @@ public class AuthViewModel extends ViewModel {
         User user = new User(
                 username.getValue(),
                 email.getValue(),
-                notifications.getValue(),
+                Arrays.asList(Objects.requireNonNull(notifications.getValue())),
                 sharing.getValue()
         );
 
@@ -247,6 +299,10 @@ public class AuthViewModel extends ViewModel {
         } else {
             this.errorConfirmPassword.setValue(null);
         }
+    }
+
+    public void logout() {
+        this.userRepository.logOut();
     }
 
     public LiveData<Boolean> loginAnonymously() {

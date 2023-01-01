@@ -20,6 +20,7 @@ import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
@@ -31,10 +32,11 @@ public class RegisterPart2Fragment extends Fragment {
 
     private AuthViewModel authViewModel;
 
-    private CheckBox        cbFriendNotification;
-    private CheckBox        cbFavoriteNotification;
-    private RadioGroup      rgSharing;
-    private TextInputLayout tilFuelType;
+    private CheckBox                cbFriendNotification;
+    private CheckBox                cbFavoriteNotification;
+    private RadioGroup              rgSharing;
+    private TextInputLayout         tilFuelType;
+    private LinearProgressIndicator lpiProgressRegister;
 
 
     public RegisterPart2Fragment() {
@@ -53,10 +55,14 @@ public class RegisterPart2Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         rgSharing = requireView().findViewById(R.id.register2_rg_sharing);
         cbFavoriteNotification = requireView().findViewById(R.id.register2_cb_favorite_station_notification);
         cbFriendNotification = requireView().findViewById(R.id.register2_cb_friends_notification);
         tilFuelType = requireView().findViewById(R.id.register2_til_fuel_type);
+
+        lpiProgressRegister = requireView().findViewById(R.id.register2_progress_indicator);
+        lpiProgressRegister.setVisibility(View.INVISIBLE);
 
         Button btnRegister = requireView().findViewById(R.id.register_btn_register);
         btnRegister.setOnClickListener(this::onRegisterClick);
@@ -88,6 +94,7 @@ public class RegisterPart2Fragment extends Fragment {
                 authViewModel.hasSamePassword(charSequence.toString());
             }
         });
+
     }
 
     private void changeNotificationValues(Boolean isChecked, String text) {
@@ -105,9 +112,10 @@ public class RegisterPart2Fragment extends Fragment {
                     v -> this.onRegisterClick(view)
             ).show();
         } else {
+            lpiProgressRegister.setVisibility(View.VISIBLE);
             final Observer<Boolean> errorIsRegistered = canBeRegistered -> {
                 if (canBeRegistered) {
-                    NavHostFragment.findNavController(this).navigate(R.id.loginFragment);
+                    NavHostFragment.findNavController(this).navigate(R.id.mapOsmFragment);
                 }
             };
 

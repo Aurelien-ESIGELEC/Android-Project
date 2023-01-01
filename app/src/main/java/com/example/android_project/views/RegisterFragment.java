@@ -1,9 +1,5 @@
 package com.example.android_project.views;
 
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +19,6 @@ import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
@@ -49,6 +44,8 @@ public class RegisterFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+
+        authViewModel.resetError();
 
         final Observer<Integer> errorEmailObserver = idError -> {
             if (idError != null) {
@@ -115,13 +112,13 @@ public class RegisterFragment extends Fragment {
         }
 
         if (authViewModel.getPassword() != null ) {
-            authViewModel.setCurrentPassword("");
+            authViewModel.setCurrentRegisterPassword("");
         }
 
         Objects.requireNonNull(etUsername.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                authViewModel.setCurrentUsername(charSequence.toString());
+                authViewModel.setCurrentRegisterUsername(charSequence.toString());
             }
         });
 
@@ -135,7 +132,7 @@ public class RegisterFragment extends Fragment {
         Objects.requireNonNull(etPassword.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                authViewModel.setCurrentPassword(charSequence.toString());
+                authViewModel.setCurrentRegisterPassword(charSequence.toString());
             }
         });
 

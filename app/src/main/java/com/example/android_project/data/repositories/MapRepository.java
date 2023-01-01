@@ -14,6 +14,7 @@ import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.data.repositories.data_sources.map.FuelPriceDataSource;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,37 +30,48 @@ public class MapRepository {
 
     public LiveData<List<GasStation>> getFuelPriceByDistance(float lat, float lon, float dist) {
         Log.v("MapRepository", "getFuelPriceByDistance");
+        this.fuelPriceDataSource.updateFuelPriceByDistance(lat, lon, dist);
+        LiveData<FuelPrices> fuelPricesLiveData = fuelPriceDataSource.getFuelPriceMutableLiveData();
         return Transformations.map(
-                this.fuelPriceDataSource.getFuelPriceByDistance(lat, lon, dist),
-                input -> {
-                    List<GasStation> gasStations = new ArrayList<>();
-                    Map<String, Integer> mapGasStation = new HashMap<>();
-                    for (Record record : input.getRecords()) {
-                        Fields fields = record.getFields();
+                fuelPricesLiveData,
+                this::transformFuelPricesToGasStations);
+    }
 
-                        Fuel fuel = new Fuel(
-                                fields.getPrixValeur(),
-                                fields.getPrixNom(),
-                                LocalDateTime.parse(fields.getPrixMaj())
-                        );
+    private List<GasStation> transformFuelPricesToGasStations(FuelPrices fuelPrices) {
+        List<GasStation> gasStations = new ArrayList<>();
+        Map<String, Integer> mapGasStation = new HashMap<>();
+        for (Record record : fuelPrices.getRecords()) {
+            Fields fields = record.getFields();
 
-                        if (!mapGasStation.containsKey(fields.getId())) {
-                            gasStations.add(new GasStation(
-                                    fields.getId(),
-                                    fields.getAdresse(),
-                                    fields.getVille(),
-                                    fields.getGeom().get(0),
-                                    fields.getGeom().get(1),
-                                    new ArrayList<>()
-                            ));
-                            mapGasStation.put(fields.getId(), gasStations.size() - 1);
-                        }
+            if (
+                    fields.getPrixValeur() != null &&
+                    fields.getPrixNom() != null &&
+                    fields.getPrixMaj() != null
+            ) {
+                Fuel fuel = new Fuel(
+                        fields.getPrixValeur(),
+                        fields.getPrixNom(),
+                        LocalDateTime.parse(fields.getPrixMaj(), DateTimeFormatter.ISO_DATE_TIME)
+                );
 
-                        gasStations.get(mapGasStation.get(fields.getId())).addFuel(fuel);
-                    }
+                if (!mapGasStation.containsKey(fields.getId())) {
+                    gasStations.add(new GasStation(
+                            fields.getId(),
+                            fields.getAdresse(),
+                            fields.getVille(),
+                            fields.getGeom().get(0),
+                            fields.getGeom().get(1),
+                            new ArrayList<>()
+                    ));
+                    mapGasStation.put(fields.getId(), gasStations.size() - 1);
+                }
 
-                    Log.v("MapRepository",gasStations.toString());
-                    return gasStations;
-                });
+                gasStations.get(mapGasStation.get(fields.getId())).addFuel(fuel);
+            }
+
+        }
+
+        Log.v("MapRepository",gasStations.toString());
+        return gasStations;
     }
 }

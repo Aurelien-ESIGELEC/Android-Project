@@ -7,4 +7,6 @@
     <string name="login_anonymous_button">Continuer anonymement</string>
     <string name="login_divider_text">OU</string>
     <string name="login_register_link">S\'enregistrer</string>
+    <string name="login_error_wrong_password">Mot de passe incorrect</string>
+    <string name="login_error_email_no_account">Pas de compte lié à cette e-mail</string>
 </resources>

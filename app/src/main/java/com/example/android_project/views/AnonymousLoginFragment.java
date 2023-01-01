@@ -60,7 +60,6 @@ public class AnonymousLoginFragment extends Fragment {
         } else {
             final Observer<Boolean> observerLoginAnonymous = isLogged -> {
                 if (isLogged) {
-//                    Log.v("RegisterFragment", )
                     Navigation.findNavController(view).navigate(R.id.mapOsmFragment);
                 }
             };

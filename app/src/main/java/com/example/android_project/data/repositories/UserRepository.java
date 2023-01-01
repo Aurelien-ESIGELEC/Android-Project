@@ -1,5 +1,7 @@
 package com.example.android_project.data.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -37,6 +39,36 @@ public class UserRepository {
                 this.userRemoteDataSource.getUserMutableLiveData(),
                 newUser -> {
                     if (newUser != null) {
+                        Log.v("UserRepository", "User created");
+                        isRegistered.setValue(true);
+                    } else {
+                        isRegistered.setValue(false);
+                    }
+                }
+        );
+
+        return isRegistered;
+    }
+
+    public LiveData<Boolean> login(String email, String password) {
+        MediatorLiveData<Boolean> isRegistered = new MediatorLiveData<>();
+
+        isRegistered.addSource(
+                this.authenticationDataSource.login(email, password),
+                isRegisteredInAuth -> {
+                    if (isRegisteredInAuth) {
+                        this.userRemoteDataSource.getUser(email);
+                    } else {
+                        isRegistered.setValue(false);
+                    }
+                }
+        );
+
+        isRegistered.addSource(
+                this.userRemoteDataSource.getUserMutableLiveData(),
+                user -> {
+                    if (user != null) {
+                        Log.v("UserRepository", "User created");
                         isRegistered.setValue(true);
                     } else {
                         isRegistered.setValue(false);
@@ -61,7 +93,23 @@ public class UserRepository {
     }
 
     public MutableLiveData<Boolean> isLogged() {
-        return this.authenticationDataSource.isLoggedLiveData();
+        MediatorLiveData<Boolean> isLogged = new MediatorLiveData<>();
+
+        MutableLiveData<Boolean> hasUser = new MutableLiveData<>();
+        MutableLiveData<Boolean> isLoggedInAuth = new MutableLiveData<>();
+
+        isLogged.addSource(this.authenticationDataSource.isLoggedLiveData(), isLoggedInAuth::setValue);
+
+        isLogged.addSource(this.userRemoteDataSource.getUserMutableLiveData(), user -> {
+            hasUser.setValue(user != null);
+
+            isLogged.setValue(
+                    Boolean.TRUE.equals(isLoggedInAuth.getValue()) &&
+                    Boolean.TRUE.equals(hasUser.getValue())
+            );
+        });
+
+        return isLogged;
     }
 
     public MutableLiveData<FirebaseUser> getLoggedAuthUser() {

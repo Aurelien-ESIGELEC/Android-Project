@@ -94,6 +94,7 @@ public class UserRemoteDataSource {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+
                         Log.d("isEmailAlreadyUsed", email + " : " + (task.getResult().size() != 0));
                         if (task.getResult().size() != 0) {
                             isEmailAlreadyInUse.postValue(true);
@@ -115,6 +116,28 @@ public class UserRemoteDataSource {
                 .add(user)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.v("Firestore", user.toString());
+                        this.userMutableLiveData.setValue(user);
+                        isUserCreated.setValue(true);
+                        errorCodeLiveData.postValue(null);
+                    } else {
+                        isUserCreated.setValue(false);
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
+                    }
+                });
+        return isUserCreated;
+    }
+
+    public MutableLiveData<Boolean> getUser(String email) {
+        MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().size() == 1) {
+                        User user = task.getResult().toObjects(User.class).get(0);
+                        Log.v("Firestore", "User : " + user.toString());
                         this.userMutableLiveData.setValue(user);
                         isUserCreated.setValue(true);
                         errorCodeLiveData.postValue(null);

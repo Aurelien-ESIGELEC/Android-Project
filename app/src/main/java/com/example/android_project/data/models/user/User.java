@@ -8,18 +8,18 @@ import java.util.List;
 public class User {
     private String username;
     private String email;
-    private String[] notifications;
+    private List<String> notifications;
     private String sharing;
     private List<User> friends;
 
-    public User(String username, String email, String[] notifications, String sharing) {
+    public User(String username, String email, List<String> notifications, String sharing) {
         this.username = username;
         this.email = email;
         this.notifications = notifications;
         this.sharing = sharing;
     }
 
-    public User(String username, String email, String[] notifications, String sharing, List<User> friends) {
+    public User(String username, String email, List<String> notifications, String sharing, List<User> friends) {
         this.username = username;
         this.email = email;
         this.notifications = notifications;
@@ -27,11 +27,11 @@ public class User {
         this.friends = friends;
     }
 
-    public String[] getNotifications() {
+    public List<String> getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(String[] notifications) {
+    public void setNotifications(List<String> notifications) {
         this.notifications = notifications;
     }
 
@@ -67,13 +67,12 @@ public class User {
         this.friends = friends;
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", notifications=" + Arrays.toString(notifications) +
+                ", notifications=" + notifications +
                 ", sharing='" + sharing + '\'' +
                 ", friends=" + friends +
                 '}';
