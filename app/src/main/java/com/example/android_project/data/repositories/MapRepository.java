@@ -37,6 +37,15 @@ public class MapRepository {
                 this::transformFuelPricesToGasStations);
     }
 
+    public LiveData<List<GasStation>> getFuelPriceByDistance(float lat, float lon, float dist, List<String> excludedIds) {
+        Log.v("MapRepository", "getFuelPriceByDistance");
+        this.fuelPriceDataSource.updateFuelPriceByDistance(lat, lon, dist, excludedIds);
+        LiveData<FuelPrices> fuelPricesLiveData = fuelPriceDataSource.getFuelPriceMutableLiveData();
+        return Transformations.map(
+                fuelPricesLiveData,
+                this::transformFuelPricesToGasStations);
+    }
+
     private List<GasStation> transformFuelPricesToGasStations(FuelPrices fuelPrices) {
         List<GasStation> gasStations = new ArrayList<>();
         Map<String, Integer> mapGasStation = new HashMap<>();

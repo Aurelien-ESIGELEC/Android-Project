@@ -5,5 +5,5 @@
     <string name="app_retry_action">Retry</string>
     <string name="app_error_no_network">No internet connexion</string>
     <string name="app_logged_out">You have been logged out</string>
-
+    <string name="string_base" translatable="false">%1$s</string>
 </resources>

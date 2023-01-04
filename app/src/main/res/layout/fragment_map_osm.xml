@@ -8,14 +8,14 @@
     tools:context=".views.MapOsmFragment">
 
     <org.osmdroid.views.MapView
-        android:id="@+id/map"
+        android:id="@+id/map_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.search.SearchBar
-        android:id="@+id/search_bar"
+        android:id="@+id/map_search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -25,24 +25,24 @@
     <com.google.android.material.search.SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/search_bar">
+        app:layout_anchor="@id/map_search_bar">
         <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
     </com.google.android.material.search.SearchView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_action_button"
+        android:id="@+id/map_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchorGravity="top|end"
         app:useCompatPadding="true"
         android:layout_gravity="top"
-        app:layout_anchor="@id/standard_bottom_sheet"
+        app:layout_anchor="@id/map_standard_bottom_sheet"
         android:layout_margin="16dp"
         android:contentDescription="description"
         app:srcCompat="@drawable/my_location"/>
 
     <FrameLayout
-        android:id="@+id/standard_bottom_sheet"
+        android:id="@+id/map_standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
         app:behavior_hideable="false"
         android:layout_width="match_parent"

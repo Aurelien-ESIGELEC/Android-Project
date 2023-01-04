@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.android_project.api.fuel_price.FuelPriceService;
 import com.example.android_project.api.fuel_price.pojo.FuelPrices;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 
 import retrofit2.Call;
@@ -33,6 +34,25 @@ public class FuelPriceDataSource {
     public void updateFuelPriceByDistance(float lat, float lon, float dist) {
 
         fuelPriceService.getPriceByDistance(lat + "," + lon + "," + dist).enqueue(new Callback<FuelPrices>() {
+            @Override
+            public void onResponse(Call<FuelPrices> call, Response<FuelPrices> response) {
+                if (response.isSuccessful()) {
+                    fuelPriceMutableLiveData.setValue(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FuelPrices> call, Throwable t) {
+                fuelPriceMutableLiveData.setValue(null);
+            }
+        });
+
+
+    }
+
+    public void updateFuelPriceByDistance(float lat, float lon, float dist, List<String> excludedIds) {
+
+        fuelPriceService.getPriceByDistance(lat + "," + lon + "," + dist, excludedIds).enqueue(new Callback<FuelPrices>() {
             @Override
             public void onResponse(Call<FuelPrices> call, Response<FuelPrices> response) {
                 if (response.isSuccessful()) {
