@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_settings">Mes paramètres</string>
+    <string name="menu_logout">Se déconnecter</string>
+    <string name="menu_anonymous_user">Anonyme</string>
+    <string name="menu_stat">Mes statistiques</string>
+    <string name="menu_friends">Mes amis</string>
+    <string name="menu_close_description">Bouton servant à fermer le menu</string>
+</resources>

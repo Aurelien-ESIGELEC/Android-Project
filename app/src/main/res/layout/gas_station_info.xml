@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/station_tv_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_base"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <TextView
+        android:id="@+id/station_tv_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/station_city"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+    <TextView
+        android:id="@+id/station_km"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/map_kilometer"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+</LinearLayout>

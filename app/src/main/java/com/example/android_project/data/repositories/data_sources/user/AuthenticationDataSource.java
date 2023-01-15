@@ -14,22 +14,17 @@ import java.util.Objects;
 
 public class AuthenticationDataSource {
 
+    private static final String TAG = "AuthenticationDataSource";
+
     private FirebaseAuth mAuth;
-    private MutableLiveData<FirebaseUser> currentUserLiveData;
     private MutableLiveData<Boolean> isLoggedLiveData;
 
     private MutableLiveData<String> errorCodeLiveData;
 
     public AuthenticationDataSource() {
         mAuth = FirebaseAuth.getInstance();
-        currentUserLiveData = new MutableLiveData<>();
-        isLoggedLiveData = new MutableLiveData<>(false);
+        isLoggedLiveData = new MutableLiveData<>(null);
         errorCodeLiveData = new MutableLiveData<>();
-
-        if (mAuth.getCurrentUser() != null) {
-            currentUserLiveData.setValue(mAuth.getCurrentUser());
-            isLoggedLiveData.setValue(true);
-        }
     }
 
     public MutableLiveData<Boolean> register(String email, String password) {
@@ -37,7 +32,6 @@ public class AuthenticationDataSource {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        currentUserLiveData.setValue(mAuth.getCurrentUser());
                         isLoggedLiveData.setValue(true);
                         isRegistered.setValue(true);
                         errorCodeLiveData.setValue(null);
@@ -55,7 +49,6 @@ public class AuthenticationDataSource {
         mAuth.signInAnonymously()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        currentUserLiveData.setValue(mAuth.getCurrentUser());
                         isLoggedLiveData.setValue(true);
                         errorCodeLiveData.setValue(null);
                         isLogged.setValue(true);
@@ -70,34 +63,42 @@ public class AuthenticationDataSource {
 
     public MutableLiveData<Boolean> login(String email, String password) {
         MutableLiveData<Boolean> isLogged = new MutableLiveData<>();
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        currentUserLiveData.setValue(mAuth.getCurrentUser());
-                        isLoggedLiveData.setValue(true);
-                        errorCodeLiveData.setValue(null);
-                        isLogged.setValue(true);
-                    } else {
-                        isLogged.setValue(false);
-                        isLoggedLiveData.setValue(false);
-                        errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
-                    }
-                });
+        Log.d(TAG, "login: " + (email != null && password != null && !email.isEmpty() && !password.isEmpty()));
+        if (email != null && password != null && !email.isEmpty() && !password.isEmpty()){
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "login: " + task);
+                            isLoggedLiveData.setValue(true);
+                            errorCodeLiveData.setValue(null);
+                            isLogged.setValue(true);
+                        } else {
+                            isLogged.setValue(false);
+                            isLoggedLiveData.setValue(false);
+                            errorCodeLiveData.setValue(((FirebaseAuthException) Objects.requireNonNull(task.getException())).getErrorCode());
+                        }
+                    });
+        } else {
+            isLogged.setValue(false);
+        }
         return isLogged;
     }
 
     public void logOut() {
         mAuth.signOut();
         isLoggedLiveData.setValue(false);
-        currentUserLiveData.setValue(null);
         errorCodeLiveData.setValue(null);
     }
+
+    public String getEmailFromFirebaseUser() { return Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();}
+
+    public Boolean hasExistingUser() { return mAuth.getCurrentUser() != null; }
+
+    public Boolean isAnonymous() { return Objects.requireNonNull(mAuth.getCurrentUser()).isAnonymous(); }
 
     public MutableLiveData<Boolean> isLoggedLiveData() {
         return isLoggedLiveData;
     }
 
-    public MutableLiveData<FirebaseUser> getCurrentUserLiveData() {
-        return currentUserLiveData;
-    }
 }

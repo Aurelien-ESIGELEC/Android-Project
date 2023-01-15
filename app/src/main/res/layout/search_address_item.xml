@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/list_tv_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <TextView
+        android:id="@+id/list_tv_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:paddingBottom="8dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+    <com.google.android.material.divider.MaterialDivider
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

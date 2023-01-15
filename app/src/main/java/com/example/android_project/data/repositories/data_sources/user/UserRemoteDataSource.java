@@ -5,8 +5,11 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.data.models.user.User;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.Objects;
 
@@ -25,38 +28,6 @@ public class UserRemoteDataSource {
         db = FirebaseFirestore.getInstance();
         errorCodeLiveData = new MutableLiveData<>();
     }
-
-    /*
-    public void getUserData(String email) {
-        db.collection("users")
-                .whereEqualTo("email", email)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Map<String, Object> userMap = task
-                                .getResult()
-                                .getDocuments()
-                                .get(0)
-                                .getData();
-
-                        User user = null;
-                        if (userMap != null && !userMap.isEmpty()) {
-                            user = new User(
-                                    (String) userMap.get("username"),
-                                    (String) userMap.get("email"),
-                                    (String) userMap.get("firstName"),
-                                    (String) userMap.get("lastName")
-                            );
-                        }
-
-                        userMutableLiveData.postValue(user);
-                        errorCodeLiveData.postValue(null);
-                    } else {
-                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
-                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
-                    }
-                });
-    }*/
 
     public void removeUser() {
         userMutableLiveData.postValue(null);
@@ -130,24 +101,62 @@ public class UserRemoteDataSource {
     }
 
     public MutableLiveData<Boolean> getUser(String email) {
-        MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
+        MutableLiveData<Boolean> isUserRetrieved = new MutableLiveData<>();
         db.collection("users")
                 .whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().size() == 1) {
                         User user = task.getResult().toObjects(User.class).get(0);
-                        Log.v("Firestore", "User : " + user.toString());
-                        this.userMutableLiveData.setValue(user);
-                        isUserCreated.setValue(true);
+                        user.setId(task.getResult().getDocuments().get(0).getId());
+                        Log.d(TAG, "getUser: " + user);
+                        userMutableLiveData.setValue(user);
+                        isUserRetrieved.setValue(true);
                         errorCodeLiveData.postValue(null);
                     } else {
-                        isUserCreated.setValue(false);
+                        isUserRetrieved.setValue(false);
                         errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
                         Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
                     }
                 });
-        return isUserCreated;
+        return isUserRetrieved;
+    }
+
+    public MutableLiveData<Boolean> addFriendToUser(String username) {
+        MutableLiveData<Boolean> isAdded = new MutableLiveData<>();
+
+        if (username != null && !username.isEmpty()) {
+
+            db.collection("users")
+                    .whereEqualTo("username", username)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult().size() == 1) {
+                            errorCodeLiveData.postValue(null);
+
+                            final DocumentReference sfDocRef = db.collection("users")
+                                    .document(Objects.requireNonNull(userMutableLiveData.getValue()).getId());
+
+                            db.runTransaction((Transaction.Function<Void>) transaction -> {
+                                        DocumentSnapshot snapshot = transaction.get(sfDocRef);
+
+                                        User[] users = snapshot.get("friends", User[].class);
+                                        Log.d(TAG, "addFriendToUser: " + users);
+//                                        transaction.update(sfDocRef, "friends", newPopulation);
+
+                                        // Success
+                                        return null;
+                                    })
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Transaction success!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Transaction failure.", e));
+                        } else {
+                            isAdded.setValue(false);
+                            errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
+                            Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
+                        }
+                    });
+        }
+        return isAdded;
     }
 
     public MutableLiveData<User> getUserMutableLiveData() {

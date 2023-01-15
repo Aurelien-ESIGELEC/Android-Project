@@ -41,28 +41,36 @@
                     style="@style/TextAppearance.Material3.LabelLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:text="@string/register2_notifications_title" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <CheckBox
-                        android:id="@+id/register2_cb_favorite_station_notification"
-                        style="@style/Widget.Material3.CompoundButton.CheckBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:id="@+id/register2_swc_fav_notification"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="@string/register2_notification_fav_box" />
 
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/materialDivider3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                     <CheckBox
-                        android:id="@+id/register2_cb_friends_notification"
-                        style="@style/Widget.Material3.CompoundButton.CheckBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:id="@+id/register2_swc_friend_notification"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="@string/register2_notification_friend_box" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/materialDivider4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <TextView
@@ -71,6 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
                     android:text="@string/register2_share_data_title" />
 
                 <RadioGroup
@@ -86,6 +95,10 @@
                         android:checked="true"
                         android:text="@string/register2_share_data_public" />
 
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
                     <RadioButton
                         android:id="@+id/radioButton3"
                         style="@style/Widget.Material3.CompoundButton.RadioButton"
@@ -93,12 +106,22 @@
                         android:layout_height="wrap_content"
                         android:text="@string/register2_share_data_friends" />
 
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/materialDivider2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                     <RadioButton
                         android:id="@+id/radioButton"
                         style="@style/Widget.Material3.CompoundButton.RadioButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/register2_share_data_private" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/materialDivider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </RadioGroup>
 
                 <TextView
@@ -111,19 +134,28 @@
                     android:layout_weight="1"
                     android:text="@string/register2_fuel_type_title" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/register2_til_fuel_type"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    android:id="@+id/register2_til_fuel_type"-->
+<!--                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+<!--                    <AutoCompleteTextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:inputType="textAutoComplete"-->
+<!--                        app:simpleItems="@array/register2_fuel_type"-->
+<!--                        tools:ignore="SpeakableTextPresentCheck" />-->
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/register2_cg_fuel_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        app:simpleItems="@array/register2_fuel_type"
-                        tools:ignore="SpeakableTextPresentCheck" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    <!-- Chips can be declared here, or added dynamically. -->
+
+                </com.google.android.material.chip.ChipGroup>
 
 
             </LinearLayout>

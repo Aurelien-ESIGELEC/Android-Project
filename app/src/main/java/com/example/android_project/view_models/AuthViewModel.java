@@ -11,17 +11,22 @@ import com.example.android_project.R;
 import com.example.android_project.data.models.user.User;
 import com.example.android_project.data.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class AuthViewModel extends ViewModel {
 
+    private static final String TAG = "AuthViewModel";
+
     private MutableLiveData<String> email;
     private MutableLiveData<String> username;
     private MutableLiveData<String> password;
-    private MutableLiveData<String> fuel;
     private MutableLiveData<String> sharing;
-    private MutableLiveData<String[]> notifications;
+    private MutableLiveData<List<String>> fuelTypes;
+    private MutableLiveData<List<String>> notifications;
 
     private MutableLiveData<Integer> errorEmail;
     private MutableLiveData<Integer> errorUsername;
@@ -34,9 +39,9 @@ public class AuthViewModel extends ViewModel {
         email = new MutableLiveData<>();
         username = new MutableLiveData<>();
         password = new MutableLiveData<>();
-        fuel = new MutableLiveData<>();
         sharing = new MutableLiveData<>();
-        notifications = new MutableLiveData<>();
+        fuelTypes = new MutableLiveData<>(new ArrayList<>());
+        notifications = new MutableLiveData<>(new ArrayList<>());
 
         errorEmail = new MutableLiveData<>();
         errorPassword = new MutableLiveData<>();
@@ -44,6 +49,12 @@ public class AuthViewModel extends ViewModel {
         errorConfirmPassword = new MutableLiveData<>();
 
         userRepository = new UserRepository();
+
+        Log.d(TAG, "AuthViewModel: " + userRepository.hasExistingUserInCache());
+        if (userRepository.hasExistingUserInCache()) {
+            this.userRepository.checkIfLoggedInCache();
+            this.userRepository.retrieveUser();
+        }
     }
 
     public void resetError() {
@@ -79,6 +90,10 @@ public class AuthViewModel extends ViewModel {
         this.password.setValue(password);
     }
 
+    public void setCurrentPassword(String password) {
+        this.password.setValue(password);
+    }
+
     public void setCurrentRegisterUsername(String username) {
         if (!isAValidUsername(username)) {
             this.errorUsername.setValue(R.string.register_error_username_not_valid);
@@ -97,66 +112,31 @@ public class AuthViewModel extends ViewModel {
     }
 
     public void addNotification(String notification) {
-
-        if (this.notifications != null) {
-            if (
-                    this.notifications.getValue() != null &&
-                    this.notifications.getValue().length > 0
-            ) {
-                boolean isAlreadyAdded = false;
-                for (int i = 0; i < this.notifications.getValue().length; i++) {
-                    if (this.notifications.getValue()[i].equals(notification)) {
-                        isAlreadyAdded = true;
-                        break;
-                    }
-                }
-
-                if (!isAlreadyAdded) {
-                    String[] newArray = Arrays.copyOf(this.notifications.getValue(), this.notifications.getValue().length + 1);
-                    newArray[newArray.length - 1] = notification;
-                    this.notifications.setValue(newArray);
-                }
-            } else {
-                this.notifications.setValue(new String[]{notification});
-            }
-        }
-
-        if (this.notifications != null && this.notifications.getValue() != null && this.notifications.getValue().length > 0) {
-            Log.v("RegisterViewModel", Arrays.toString(this.notifications.getValue()));
-        }
-
+        List<String> currentNotification = this.notifications.getValue();
+        currentNotification.add(notification);
+        this.notifications.setValue(currentNotification);
+        Log.d(TAG, "addNotification: " + this.notifications.getValue());
     }
 
     public void removeNotification(String notification) {
-        if (
-                this.notifications != null &&
-                this.notifications.getValue() != null
-        ) {
-            if (this.notifications.getValue().length > 1) {
+        List<String> currentNotification = this.notifications.getValue();
+        currentNotification.removeAll(Collections.singleton(notification));
+        this.notifications.setValue(currentNotification);
+        Log.d(TAG, "removeNotification: " + this.notifications.getValue());
+    }
 
-                String[] array = this.notifications.getValue();
-                int index = -1;
-                for (int i = 0; i < array.length; i++) {
-                    if (array[i].equals(notification)) {
-                        index = i;
-                        break;
-                    }
-                }
-                if (index != -1) {
-                    System.arraycopy(array, index + 1, array, index, array.length - index - 1);
-                    this.notifications.setValue(array);
-                }
-            }
+    public void addFuelType(String fuelType) {
+        List<String> currentFuelType = this.fuelTypes.getValue();
+        currentFuelType.add(fuelType);
+        this.fuelTypes.setValue(currentFuelType);
+        Log.d(TAG, "addFuelType: " + this.fuelTypes.getValue());
+    }
 
-            if (this.notifications.getValue().length == 1) {
-                this.notifications.setValue(null);
-            }
-        }
-
-        if (this.notifications != null && this.notifications.getValue() != null && this.notifications.getValue().length > 0) {
-            Log.v("RegisterViewModel", Arrays.toString(this.notifications.getValue()));
-        }
-
+    public void removeFuelType(String fuelType) {
+        List<String> currentFuelType = this.fuelTypes.getValue();
+        currentFuelType.removeAll(Collections.singleton(fuelType));
+        this.fuelTypes.setValue(currentFuelType);
+        Log.d(TAG, "removeFuelType: " + this.fuelTypes.getValue());
     }
 
     public LiveData<String> getEmail() {
@@ -214,29 +194,28 @@ public class AuthViewModel extends ViewModel {
     public LiveData<Boolean> loginUser() {
         MediatorLiveData<Boolean> isLogged = new MediatorLiveData<>();
 
+        Log.d(TAG, "loginUser: " + email.getValue() + ", " + password.getValue());
+
         MutableLiveData<Boolean> isEmailAlreadyInUse = this.userRepository.isEmailAlreadyInUse(email.getValue());
-        MutableLiveData<Boolean> isLoggedInApp = this.userRepository.isLogged();
 
         isLogged.addSource(isEmailAlreadyInUse, isAlreadyUsed -> {
             if (!isAlreadyUsed) {
                 this.errorEmail.setValue(R.string.login_error_email_no_account);
                 isLogged.setValue(false);
-                this.userRepository.login(
-                    email.getValue(),
-                    password.getValue()
-                );
             } else {
                 this.errorEmail.setValue(null);
-            }
-        });
-
-        isLogged.addSource(isLoggedInApp, logged -> {
-            if (logged) {
-                isLogged.setValue(true);
-                this.errorPassword.setValue(null);
-            } else {
-                isLogged.setValue(false);
-                this.errorPassword.setValue(R.string.login_error_wrong_password);
+                isLogged.addSource(
+                        this.userRepository.login(email.getValue(), password.getValue()), logged -> {
+                            if (logged != null) {
+                                if (logged) {
+                                    isLogged.setValue(true);
+                                    this.errorPassword.setValue(null);
+                                } else {
+                                    isLogged.setValue(false);
+                                    this.errorPassword.setValue(R.string.login_error_wrong_password);
+                                }
+                            }
+                        });
             }
         });
 
@@ -286,8 +265,9 @@ public class AuthViewModel extends ViewModel {
         User user = new User(
                 username.getValue(),
                 email.getValue(),
-                Arrays.asList(Objects.requireNonNull(notifications.getValue())),
-                sharing.getValue()
+                notifications.getValue(),
+                sharing.getValue(),
+                fuelTypes.getValue()
         );
 
         return this.userRepository.register(user, password.getValue());
@@ -307,5 +287,9 @@ public class AuthViewModel extends ViewModel {
 
     public LiveData<Boolean> loginAnonymously() {
         return this.userRepository.anonymousLogin();
+    }
+
+    public void resetLoggedState() {
+        this.userRepository.isLogged().setValue(null);
     }
 }

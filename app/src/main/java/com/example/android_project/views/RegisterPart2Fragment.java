@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,11 +16,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 
 import com.example.android_project.R;
 import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -30,12 +35,15 @@ import java.util.Objects;
  */
 public class RegisterPart2Fragment extends Fragment {
 
+    private static final String TAG = "RegisterPart2Fragment";
     private AuthViewModel authViewModel;
 
     private CheckBox                cbFriendNotification;
     private CheckBox                cbFavoriteNotification;
     private RadioGroup              rgSharing;
-    private TextInputLayout         tilFuelType;
+//    private TextInputLayout         tilFuelType;
+
+    private ChipGroup               cgFuelType;
     private LinearProgressIndicator lpiProgressRegister;
 
 
@@ -57,9 +65,27 @@ public class RegisterPart2Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rgSharing = requireView().findViewById(R.id.register2_rg_sharing);
-        cbFavoriteNotification = requireView().findViewById(R.id.register2_cb_favorite_station_notification);
-        cbFriendNotification = requireView().findViewById(R.id.register2_cb_friends_notification);
-        tilFuelType = requireView().findViewById(R.id.register2_til_fuel_type);
+        cbFavoriteNotification = requireView().findViewById(R.id.register2_swc_fav_notification);
+        cbFriendNotification = requireView().findViewById(R.id.register2_swc_friend_notification);
+        cgFuelType = requireView().findViewById(R.id.register2_cg_fuel_type);
+
+        String [] fuelTypeArray = getResources().getStringArray(R.array.register2_fuel_type);
+
+        for (String fuelType: fuelTypeArray) {
+            Chip chip = new Chip(requireContext());
+            chip.setText(fuelType);
+            chip.setCheckable(true);
+            chip.setCheckedIconResource(R.drawable.check);
+            chip.setCheckedIconVisible(true);
+            chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                if (isChecked) {
+                    authViewModel.addFuelType(fuelType);
+                } else {
+                    authViewModel.removeFuelType(fuelType);
+                }
+            });
+            cgFuelType.addView(chip);
+        }
 
         lpiProgressRegister = requireView().findViewById(R.id.register2_progress_indicator);
         lpiProgressRegister.setVisibility(View.INVISIBLE);
@@ -81,18 +107,11 @@ public class RegisterPart2Fragment extends Fragment {
         });
 
         cbFavoriteNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
-            changeNotificationValues(isChecked, "favorite stations");
+            changeNotificationValues(isChecked, "favorites");
         });
 
         cbFriendNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
             changeNotificationValues(isChecked, "friends");
-        });
-
-        Objects.requireNonNull(tilFuelType.getEditText()).addTextChangedListener(new CustomTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                authViewModel.hasSamePassword(charSequence.toString());
-            }
         });
 
     }

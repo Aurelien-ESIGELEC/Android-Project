@@ -18,7 +18,7 @@
             tools:layout="@layout/fragment_login">
             <action
                 android:id="@+id/action_loginFragment_to_registerFragment"
-                app:destination="@id/navigation"
+                app:destination="@id/registerFragment"
                 app:popUpToInclusive="false" />
         </fragment>
         <fragment
@@ -26,21 +26,40 @@
             android:name="com.example.android_project.views.RegisterPart2Fragment"
             android:label="fragment_register_part2"
             tools:layout="@layout/fragment_register_part2" />
-        <navigation android:id="@+id/navigation"
-            app:startDestination="@id/registerFragment">
-            <fragment
-                android:id="@+id/registerFragment"
-                android:name="com.example.android_project.views.RegisterFragment"
-                android:label="fragment_register"
-                tools:layout="@layout/fragment_register">
-                <action
-                    android:id="@+id/action_registerFragment_to_loginFragment"
-                    app:destination="@id/loginFragment"
-                    app:popUpToInclusive="false" />
-                <action
-                    android:id="@+id/action_registerFragment_to_registerPart2Fragment"
-                    app:destination="@id/registerPart2Fragment" />
-            </fragment>
-        </navigation>
+        <fragment
+            android:id="@+id/registerFragment"
+            android:name="com.example.android_project.views.RegisterFragment"
+            android:label="fragment_register"
+            tools:layout="@layout/fragment_register">
+            <action
+                android:id="@+id/action_registerFragment_to_loginFragment"
+                app:destination="@id/loginFragment"
+                app:popUpToInclusive="false" />
+            <action
+                android:id="@+id/action_registerFragment_to_registerPart2Fragment"
+                app:destination="@id/registerPart2Fragment" />
+        </fragment>
+    </navigation>
+    <navigation android:id="@+id/menuNavigation"
+        app:startDestination="@id/menuBottomSheetFragment">
+        <fragment
+            android:id="@+id/settingsFragment"
+            android:name="com.example.android_project.views.SettingsFragment"
+            android:label="fragment_settings"
+            tools:layout="@layout/fragment_settings" />
+        <fragment
+            android:id="@+id/statsFragment"
+            android:name="com.example.android_project.views.StatsFragment"
+            android:label="fragment_stats"
+            tools:layout="@layout/fragment_stats" />
+        <dialog
+            android:id="@+id/menuBottomSheetFragment"
+            android:name="com.example.android_project.views.MenuBottomSheetFragment"
+            android:label="MenuBottomSheetFragment"/>
+        <fragment
+            android:id="@+id/myFriendsFragment"
+            android:name="com.example.android_project.views.MyFriendsFragment"
+            android:label="fragment_my_friends"
+            tools:layout="@layout/fragment_my_friends" />
     </navigation>
 </navigation>

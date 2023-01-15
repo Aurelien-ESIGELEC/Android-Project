@@ -158,24 +158,15 @@ public class RegisterFragment extends Fragment {
         Navigation.findNavController(view).navigate(action);
     }
 
-    private boolean isFieldEmpty(TextInputLayout et) {
-        if (TextUtils.isEmpty(Objects.requireNonNull(et.getEditText()).getText())) {
-            et.setError(getString(R.string.form_error_required));
-            return true;
-        }
-        et.setError(null);
-        return false;
-    }
-
     public void onNextClick(View view) {
-        boolean isFormNotFilled = isFieldEmpty(etEmail);
-        if (isFieldEmpty(etUsername)) {
+        boolean isFormNotFilled = Utils.isFieldEmpty(requireContext(), etEmail);
+        if (Utils.isFieldEmpty(requireContext(), etUsername)) {
             isFormNotFilled = true;
         }
-        if (isFieldEmpty(etPassword)) {
+        if (Utils.isFieldEmpty(requireContext(), etPassword)) {
             isFormNotFilled = true;
         }
-        if (isFieldEmpty(etConfirmPassword)) {
+        if (Utils.isFieldEmpty(requireContext(), etConfirmPassword)) {
             isFormNotFilled = true;
         }
 

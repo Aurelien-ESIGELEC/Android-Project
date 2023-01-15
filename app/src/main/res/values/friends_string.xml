@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="friends_my_friends_title">Friends</string>
+    <string name="friends_follower_title">Follower</string>
+    <string name="friends_dialog_title">My Friends</string>
+    <string name="friends_add_friend">Add a friend</string>
+</resources>

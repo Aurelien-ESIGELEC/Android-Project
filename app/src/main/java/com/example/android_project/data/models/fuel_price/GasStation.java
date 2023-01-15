@@ -8,19 +8,33 @@ public class GasStation {
 
     private String address;
     private String city;
+    private String postalCode;
 
     private double lon;
     private double lat;
 
     private List<Fuel> fuelList;
 
-    public GasStation(String id, String address, String city, double lat, double lon, List<Fuel> fuelList) {
+    public GasStation(String id, String address, String postalCode, String city, double lat, double lon, List<Fuel> fuelList) {
         this.id = id;
         this.address = address;
+        this.postalCode = postalCode;
         this.city = city;
         this.lon = lon;
         this.lat = lat;
         this.fuelList = fuelList;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public List<Fuel> getFuelList() {
+        return fuelList;
     }
 
     public String getId() {
@@ -77,6 +91,7 @@ public class GasStation {
                 "id='" + id + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
+                ", postalCode='" + postalCode + '\'' +
                 ", lon=" + lon +
                 ", lat=" + lat +
                 ", fuelList=" + fuelList +

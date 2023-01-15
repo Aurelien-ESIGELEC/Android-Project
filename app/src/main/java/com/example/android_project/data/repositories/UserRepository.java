@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class UserRepository {
 
+    private static final String TAG = "UserRepository";
     private final AuthenticationDataSource authenticationDataSource;
     private final UserRemoteDataSource userRemoteDataSource;
 
@@ -50,34 +51,80 @@ public class UserRepository {
         return isRegistered;
     }
 
-    public LiveData<Boolean> login(String email, String password) {
-        MediatorLiveData<Boolean> isRegistered = new MediatorLiveData<>();
-
-        isRegistered.addSource(
-                this.authenticationDataSource.login(email, password),
-                isRegisteredInAuth -> {
-                    if (isRegisteredInAuth) {
-                        this.userRemoteDataSource.getUser(email);
-                    } else {
-                        isRegistered.setValue(false);
-                    }
-                }
-        );
-
-        isRegistered.addSource(
-                this.userRemoteDataSource.getUserMutableLiveData(),
-                user -> {
-                    if (user != null) {
-                        Log.v("UserRepository", "User created");
-                        isRegistered.setValue(true);
-                    } else {
-                        isRegistered.setValue(false);
-                    }
-                }
-        );
-
-        return isRegistered;
+    public void checkIfLoggedInCache() {
+        Log.d(TAG, "checkIfLoggedInCache: "+ authenticationDataSource.hasExistingUser());
+        if (authenticationDataSource.hasExistingUser()) {
+            this.authenticationDataSource.isLoggedLiveData().setValue(true);
+        }
     }
+
+    public LiveData<Boolean> retrieveUser() {
+        MediatorLiveData<Boolean> isLogged = new MediatorLiveData<>();
+
+        if (authenticationDataSource.hasExistingUser() && !authenticationDataSource.isAnonymous()) {
+
+            isLogged.addSource(
+                    this.userRemoteDataSource.getUser(
+                            this.authenticationDataSource.getEmailFromFirebaseUser()
+                    ),
+                    user -> {
+                        if (user != null) {
+                            isLogged.setValue(true);
+                        } else {
+                            isLogged.setValue(false);
+                        }
+                    }
+            );
+        } else  {
+            isLogged.setValue(false);
+        }
+
+        return isLogged;
+    }
+
+    public Boolean hasExistingUserInCache() {
+        return this.authenticationDataSource.hasExistingUser();
+    }
+
+    public LiveData<Boolean> login(String email, String password) {
+        MediatorLiveData<Boolean> isFullyLogged = new MediatorLiveData<>();
+        isFullyLogged.setValue(null);
+
+        MutableLiveData<Boolean> isLogged = this.authenticationDataSource.login(email, password);
+        isFullyLogged.addSource(
+                isLogged,
+                isRegisteredInAuth -> {
+                    Log.d(TAG, "login: "+ isFullyLogged);
+                    if (isRegisteredInAuth) {
+                        isFullyLogged.addSource(
+                                this.userRemoteDataSource.getUser(email),
+                                user -> {
+                                    if (user != null) {
+                                        Log.v("UserRepository", "User getted : " + user );
+                                        isFullyLogged.setValue(true);
+                                    } else {
+                                        isFullyLogged.setValue(false);
+                                    }
+                                }
+                        );
+                    } else {
+                        isFullyLogged.setValue(false);
+                    }
+                }
+        );
+
+
+
+        return isFullyLogged;
+    }
+
+//    public MutableLiveData<Boolean> addFriendToUser(String username) {
+//        MediatorLiveData<Boolean> isAdded = new MediatorLiveData<>();
+//
+//        if (username != null && !username.isEmpty()) {
+//
+//        }
+//    }
 
     public MutableLiveData<Boolean> anonymousLogin() {
         return this.authenticationDataSource.anonymousLogin();
@@ -93,27 +140,7 @@ public class UserRepository {
     }
 
     public MutableLiveData<Boolean> isLogged() {
-        MediatorLiveData<Boolean> isLogged = new MediatorLiveData<>();
-
-        MutableLiveData<Boolean> hasUser = new MutableLiveData<>();
-        MutableLiveData<Boolean> isLoggedInAuth = new MutableLiveData<>();
-
-        isLogged.addSource(this.authenticationDataSource.isLoggedLiveData(), isLoggedInAuth::setValue);
-
-        isLogged.addSource(this.userRemoteDataSource.getUserMutableLiveData(), user -> {
-            hasUser.setValue(user != null);
-
-            isLogged.setValue(
-                    Boolean.TRUE.equals(isLoggedInAuth.getValue()) &&
-                    Boolean.TRUE.equals(hasUser.getValue())
-            );
-        });
-
-        return isLogged;
-    }
-
-    public MutableLiveData<FirebaseUser> getLoggedAuthUser() {
-        return this.authenticationDataSource.getCurrentUserLiveData();
+        return this.authenticationDataSource.isLoggedLiveData();
     }
 
     public MutableLiveData<Boolean> isUsernameAlreadyInUse(String username) {

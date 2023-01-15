@@ -13,6 +13,8 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,11 +24,14 @@ import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
 public class LoginFragment extends Fragment {
+
+    public static final String TAG = "LoginFragment";
 
     private TextInputLayout etEmail;
     private TextInputLayout etPassword;
@@ -45,6 +50,8 @@ public class LoginFragment extends Fragment {
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
 
         authViewModel.resetError();
+
+        authViewModel.resetLoggedState();
 
         final Observer<Integer> errorPasswordObserver = idError -> {
             if (idError != null) {
@@ -87,7 +94,10 @@ public class LoginFragment extends Fragment {
         Objects.requireNonNull(etEmail.getEditText()).addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                authViewModel.setCurrentEmail(charSequence.toString());
+                Log.d(TAG, "onTextChanged: " + charSequence);
+                    if (!charSequence.toString().equals("")) {
+                        authViewModel.setCurrentEmail(charSequence.toString());
+                    }
             }
         });
 
@@ -95,28 +105,45 @@ public class LoginFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 authViewModel.resetPasswordError();
+                if (!charSequence.toString().equals("")) {
+                    authViewModel.setCurrentPassword(charSequence.toString());
+                }
             }
         });
 
-        if (authViewModel.getEmail() != null) {
+        if (authViewModel.getEmail() != null ) {
             Objects.requireNonNull(etEmail.getEditText()).setText(authViewModel.getEmail().getValue());
         }
     }
 
+    private boolean isFormCorrectlyFilled() {
+        return TextUtils.isEmpty(etEmail.getError()) &&
+                TextUtils.isEmpty(etPassword.getError());
+    }
+
     public void onLoginClick(View view) {
+        boolean isFormNotFilled = Utils.isFieldEmpty(requireContext(), etEmail );
+        if (Utils.isFieldEmpty(requireContext(), etPassword)) {
+            isFormNotFilled = true;
+        }
+
         if (Utils.isNetworkUnavailable(requireContext())) {
             Utils.createSnackbarNoNetwork(requireView(), v -> this.onLoginClick(view)).show();
         } else {
-            lpiProgressRegister.setVisibility(View.VISIBLE);
-            final Observer<Boolean> errorIsLogged = canBeRegistered -> {
-                if (canBeRegistered) {
-                    NavHostFragment.findNavController(this).navigate(R.id.mapOsmFragment);
-                } else {
-                    lpiProgressRegister.setVisibility(View.INVISIBLE);
-                }
-            };
+            if (!isFormNotFilled && isFormCorrectlyFilled()){
 
-            authViewModel.loginUser().observe(this, errorIsLogged);
+                authViewModel.resetLoggedState();
+                lpiProgressRegister.setVisibility(View.VISIBLE);
+                final Observer<Boolean> errorIsLogged = canBeRegistered -> {
+                    if (canBeRegistered) {
+                        NavHostFragment.findNavController(this).navigate(R.id.mapOsmFragment);
+                    } else {
+                        lpiProgressRegister.setVisibility(View.INVISIBLE);
+                    }
+                };
+
+                authViewModel.loginUser().observe(this, errorIsLogged);
+            }
         }
     }
 
