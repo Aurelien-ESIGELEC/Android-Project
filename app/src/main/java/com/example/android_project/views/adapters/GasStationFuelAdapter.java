@@ -10,26 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_project.R;
-import com.example.android_project.data.models.fuel_price.GasStation;
+import com.example.android_project.data.models.fuel_price.Fuel;
 
-public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAdapter.ViewHolder> {
+import java.util.List;
 
-    private final GasStation gasStation;
+public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAdapter.ViewHolder> {
+
+    private final List<Fuel> fuelList;
     private Double distance;
 
     /**
      * Initialize the dataset of the Adapter
      *
-     * @param gasStation {@link GasStation} containing the data to populate view to be used
+     * @param fuelList {@link List}<{@link Fuel}> containing the data to populate view to be used
      * by RecyclerView
      */
-    public GasStationInfoAdapter(GasStation gasStation, Double distance) {
-        this.gasStation = gasStation;
-        this.distance = distance;
-    }
-
-    public GasStationInfoAdapter(GasStation gasStation) {
-        this.gasStation = gasStation;
+    public GasStationFuelAdapter(List<Fuel> fuelList) {
+        this.fuelList = fuelList;
     }
 
     /**
@@ -66,7 +63,7 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
-    public GasStationInfoAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public GasStationFuelAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.gas_station_info, viewGroup, false);
@@ -78,17 +75,17 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull GasStationInfoAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NonNull GasStationFuelAdapter.ViewHolder viewHolder, final int position) {
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
-        Context context = viewHolder.itemView.getContext();
-        viewHolder.getTvAddress().setText(gasStation.getAddress());
-        viewHolder.getTvCity().setText(context.getString(R.string.station_city, gasStation.getPostalCode(), gasStation.getCity()));
-        if (distance != null) {
-            viewHolder.getTvDistance().setText(context.getString(R.string.map_kilometer, distance));
-        }
+//        Context context = viewHolder.itemView.getContext();
+//        viewHolder.getTvAddress().setText(gasStation.getAddress());
+//        viewHolder.getTvCity().setText(context.getString(R.string.station_city, gasStation.getPostalCode(), gasStation.getCity()));
+//        if (distance != null) {
+//            viewHolder.getTvDistance().setText(context.getString(R.string.map_kilometer, distance));
+//        }
 
     }
 

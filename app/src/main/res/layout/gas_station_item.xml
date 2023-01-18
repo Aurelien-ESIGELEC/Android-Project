@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/station_tv_city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/string_base"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-    <TextView
-
-        android:id="@+id/station_tv_address"
+        android:id="@+id/station_fuel_tv_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/string_base"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <TextView
+        android:id="@+id/station_fuel_tv_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/station_city"
+        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

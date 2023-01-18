@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.android_project.api.fuel_price.pojo.FuelPrices;
 import com.example.android_project.api.nominatim.NominatimService;
 import com.example.android_project.api.nominatim.pojo.NominatimAddress;
 
@@ -22,9 +21,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NominatimDataSource {
 
     private static final String TAG = "NominatimDataSource";
-    private NominatimService nominatimService;
-    private MutableLiveData<List<NominatimAddress>> nominatimAddressLiveData;
-    private ExecutorService executorService;
+    private final NominatimService nominatimService;
+    private final MutableLiveData<List<NominatimAddress>> nominatimAddressLiveData;
+    private final ExecutorService executorService;
 
     public NominatimDataSource() {
         Retrofit retrofit = new Retrofit.Builder()

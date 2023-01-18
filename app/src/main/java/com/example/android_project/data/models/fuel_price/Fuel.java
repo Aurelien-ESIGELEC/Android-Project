@@ -8,10 +8,25 @@ public class Fuel {
     private String name;
     private LocalDateTime updateDate;
 
+    private double reliabilityIndex;
+
     public Fuel(double price, String name, LocalDateTime updateDate) {
+        this(price, name, updateDate, 100);
+    }
+
+    public Fuel(double price, String name, LocalDateTime updateDate, double reliabilityIndex) {
         this.price = price;
         this.name = name;
         this.updateDate = updateDate;
+        this.reliabilityIndex = reliabilityIndex;
+    }
+
+    public void setReliabilityIndex(double reliabilityIndex) {
+        this.reliabilityIndex = reliabilityIndex;
+    }
+
+    public double getReliabilityIndex() {
+        return reliabilityIndex;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -44,6 +59,7 @@ public class Fuel {
                 "price=" + price +
                 ", name='" + name + '\'' +
                 ", updateDate=" + updateDate +
+                ", reliabilityIndex=" + reliabilityIndex +
                 '}';
     }
 }

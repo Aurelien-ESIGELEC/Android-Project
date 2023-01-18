@@ -1,5 +1,6 @@
 package com.example.android_project.view_models;
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -13,20 +14,21 @@ import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.data.repositories.MapRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 
 public class MapViewModel extends ViewModel {
 
     private static final String TAG = "MapViewModel";
-    private MutableLiveData<String> search;
+    private final MutableLiveData<String> search;
 
-    private MutableLiveData<List<GasStation>> gasStations;
+    private final MutableLiveData<List<GasStation>> gasStations;
 
-    private MutableLiveData<List<SearchAddress>> listResultSearch;
-    private MutableLiveData<GasStation> selectedStation;
-
-    private MapRepository mapRepository;
+    private final MutableLiveData<List<SearchAddress>> listResultSearch;
+    private final MutableLiveData<GasStation> selectedStation;
+    private final MutableLiveData<Location> userLocation;
+    private final MapRepository mapRepository;
 
     public MapViewModel() {
         this.mapRepository = new MapRepository();
@@ -35,14 +37,32 @@ public class MapViewModel extends ViewModel {
         this.search = new MutableLiveData<>();
         this.listResultSearch = new MutableLiveData<>();
         this.selectedStation = new MutableLiveData<>();
+        this.userLocation = new MutableLiveData<>();
     }
 
     public void setSearchValue(String search) {
         this.search.setValue(search);
     }
 
+    public void setUserLocation(Location newLocation) {
+        this.userLocation.setValue(newLocation);
+    }
+
     public MutableLiveData<String> getSearch() {
         return search;
+    }
+
+    public LiveData<Double> getDistanceBetweenLocationAndGasStation(GasStation gasStation) {
+        Location sourceLocation = userLocation.getValue();
+        if (sourceLocation != null) {
+            return this.mapRepository.getDistanceBetweenPoints(
+                    sourceLocation.getLatitude(),
+                    sourceLocation.getLongitude(),
+                    gasStation.getLat(),
+                    gasStation.getLon()
+            );
+        }
+        return null;
     }
 
     public LiveData<List<GasStation>> updateListStationsByLocation(float lat, float lon, float dist) {
@@ -91,16 +111,13 @@ public class MapViewModel extends ViewModel {
         this.selectedStation.setValue(gasStation);
     }
 
+    public MutableLiveData<Location> getUserLocation() {
+        return userLocation;
+    }
+
     public MutableLiveData<GasStation> getSelectedStation() {
         return selectedStation;
     }
-
-    //    public void updateListStationsByLocation(float lat, float lon, float dist, List<String> excludedIds) {
-//        Executors.newSingleThreadExecutor().execute(() ->
-//                this.gasStations = this.mapRepository.getFuelPriceByDistance(lat, lon, dist, excludedIds)
-//        );
-//    }
-
 
     public MutableLiveData<List<SearchAddress>> getListResultSearch() {
         return listResultSearch;

@@ -1,28 +1,29 @@
 package com.example.android_project.data.models.fuel_price;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class GasStation {
 
     private String id;
-
     private String address;
     private String city;
     private String postalCode;
-
     private double lon;
     private double lat;
 
-    private List<Fuel> fuelList;
+    private HashMap<String, List<Fuel>> fuelList;
 
-    public GasStation(String id, String address, String postalCode, String city, double lat, double lon, List<Fuel> fuelList) {
+    public GasStation(String id, String address, String postalCode, String city, double lat, double lon) {
         this.id = id;
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
         this.lon = lon;
         this.lat = lat;
-        this.fuelList = fuelList;
+        this.fuelList = new HashMap<>();
     }
 
     public String getPostalCode() {
@@ -31,10 +32,6 @@ public class GasStation {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
-    }
-
-    public List<Fuel> getFuelList() {
-        return fuelList;
     }
 
     public String getId() {
@@ -77,12 +74,11 @@ public class GasStation {
         this.lat = lat;
     }
 
-    public void setFuelList(List<Fuel> fuelList) {
-        this.fuelList = fuelList;
-    }
-
-    public void addFuel(Fuel fuel) {
-        this.fuelList.add(fuel);
+    public void addFuel(String name, Fuel fuel) {
+        if (fuelList.containsKey(name)) {
+            fuelList.put(name, new ArrayList<>());
+        }
+        Objects.requireNonNull(fuelList.get(name)).add(fuel);
     }
 
     @Override

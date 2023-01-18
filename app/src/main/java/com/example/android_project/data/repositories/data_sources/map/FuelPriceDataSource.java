@@ -2,13 +2,13 @@ package com.example.android_project.data.repositories.data_sources.map;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.api.fuel_price.FuelPriceService;
 import com.example.android_project.api.fuel_price.pojo.FuelPrices;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,15 +54,13 @@ public class FuelPriceDataSource {
                     }
                 })
         );
-
-
     }
 
     public void updateFuelPriceByDistance(float lat, float lon, float dist, List<String> excludedIds) {
 
         fuelPriceService.getPriceByDistance(lat + "," + lon + "," + dist, excludedIds).enqueue(new Callback<FuelPrices>() {
             @Override
-            public void onResponse(Call<FuelPrices> call, Response<FuelPrices> response) {
+            public void onResponse(@NonNull Call<FuelPrices> call, @NonNull Response<FuelPrices> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "onResponse: " + response);
                     Log.d(TAG, "onResponse: " + response.body());
@@ -71,7 +69,7 @@ public class FuelPriceDataSource {
             }
 
             @Override
-            public void onFailure(Call<FuelPrices> call, Throwable t) {
+            public void onFailure(@NonNull Call<FuelPrices> call, @NonNull Throwable t) {
                 fuelPriceMutableLiveData.postValue(null);
             }
         });

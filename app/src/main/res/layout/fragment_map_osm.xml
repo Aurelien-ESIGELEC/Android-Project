@@ -22,18 +22,6 @@
         android:hint="@string/map_search_hint"
         app:menu="@menu/osm_top_bar_menu"/>
 
-    <com.google.android.material.search.SearchView
-        android:id="@+id/map_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/map_search_bar">
-        <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/map_rv_search_result"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.google.android.material.search.SearchView>
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/map_fab_location"
@@ -42,7 +30,7 @@
         app:layout_anchorGravity="top|end"
         app:useCompatPadding="true"
         android:layout_gravity="top"
-        app:layout_anchor="@+id/map_fab_list_gas_station"
+        app:layout_anchor="@id/map_fab_list_gas_station"
         style="?attr/floatingActionButtonSecondaryStyle"
         android:contentDescription="description"
         app:srcCompat="@drawable/my_location"/>
@@ -73,8 +61,7 @@
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             />
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/map_bottom_sheet_recycler_view"
@@ -87,6 +74,18 @@
              />
 
     </FrameLayout>
+
+    <com.google.android.material.search.SearchView
+        android:id="@+id/map_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/map_search_bar">
+        <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/map_rv_search_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.search.SearchView>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

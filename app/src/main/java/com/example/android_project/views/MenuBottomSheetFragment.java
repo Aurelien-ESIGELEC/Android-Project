@@ -1,7 +1,6 @@
 package com.example.android_project.views;
 
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,25 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.user.User;
 import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.Objects;
-
 public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
 
     public static final String TAG = "ModalBottomSheet";
 
     private AuthViewModel authViewModel;
-
-    private boolean isLargeLayout;
 
     private TextView tvUsername;
 
@@ -58,10 +50,10 @@ public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        isLargeLayout = getResources().getBoolean(R.bool.large_layout);
+        boolean isLargeLayout = getResources().getBoolean(R.bool.large_layout);
 
         tvUsername = requireView().findViewById(R.id.menu_tv_username);
-        ImageButton btnClose = requireView().findViewById(R.id.menu_btn_close);
+        ImageButton btnClose = requireView().findViewById(R.id.list_station_btn_close);
 
         Button btnLogout = requireView().findViewById(R.id.menu_btn_logout);
         Button btnSettings = requireView().findViewById(R.id.menu_btn_settings);
@@ -100,9 +92,9 @@ public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     public void onStatClick(View v) {
-        SettingsFragment settingsFragment = new SettingsFragment();
+        StatsFragment statsFragment = new StatsFragment();
 
-        launchDialog(settingsFragment);
+        launchDialog(statsFragment);
     }
 
     public void onMyFriendsClick(View v) {

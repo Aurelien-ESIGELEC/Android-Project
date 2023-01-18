@@ -7,14 +7,14 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/station_tv_address"
+        android:id="@+id/station_fuel_tv_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/string_base"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
     <TextView
-        android:id="@+id/station_tv_city"
+        android:id="@+id/station_fuel_tv_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/station_city"
@@ -27,10 +27,12 @@
         android:text="@string/map_kilometer"
         android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/station_item_chips_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:visibility="gone" />
-
+        android:layout_height="match_parent" />
 </LinearLayout>

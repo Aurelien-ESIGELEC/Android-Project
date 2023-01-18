@@ -1,6 +1,5 @@
 package com.example.android_project.data.repositories;
 
-import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,6 +8,7 @@ import androidx.lifecycle.Transformations;
 import com.example.android_project.api.fuel_price.pojo.Fields;
 import com.example.android_project.api.fuel_price.pojo.FuelPrices;
 import com.example.android_project.api.fuel_price.pojo.Record;
+import com.example.android_project.api.matrix.pojo.response.MatrixInfo;
 import com.example.android_project.api.nominatim.pojo.Address;
 import com.example.android_project.api.nominatim.pojo.Namedetails;
 import com.example.android_project.api.nominatim.pojo.NominatimAddress;
@@ -16,11 +16,13 @@ import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.data.repositories.data_sources.map.FuelPriceDataSource;
+import com.example.android_project.data.repositories.data_sources.map.MatrixDataSource;
 import com.example.android_project.data.repositories.data_sources.map.NominatimDataSource;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +33,12 @@ public class MapRepository {
 
     private FuelPriceDataSource fuelPriceDataSource;
     private NominatimDataSource nominatimDataSource;
+    private MatrixDataSource    matrixDataSource;
 
     public MapRepository() {
         this.nominatimDataSource = new NominatimDataSource();
         this.fuelPriceDataSource = new FuelPriceDataSource();
+        this.matrixDataSource    = new MatrixDataSource();
     }
 
     public LiveData<List<SearchAddress>> getAddressBySearch(String search) {
@@ -58,6 +62,12 @@ public class MapRepository {
         return Transformations.map(
                 fuelPriceDataSource.getFuelPriceMutableLiveData(),
                 this::transformFuelPricesToGasStations);
+    }
+
+    public LiveData<Double> getDistanceBetweenPoints(double sourceLat, double sourceLon, double destLat, double destLon) {
+        this.matrixDataSource.updateDistanceBetweenPoints(Arrays.asList(sourceLat, sourceLon), Arrays.asList(destLat, destLon));
+        return Transformations.map(
+                matrixDataSource.getMatrixInfoMutableLiveData(), input -> input.getDistances().get(0).get(0));
     }
 
     private List<GasStation> transformFuelPricesToGasStations(FuelPrices fuelPrices) {
@@ -85,13 +95,12 @@ public class MapRepository {
                             fields.getCp(),
                             fields.getVille(),
                             fields.getGeom().get(0),
-                            fields.getGeom().get(1),
-                            new ArrayList<>()
+                            fields.getGeom().get(1)
                     ));
                     mapGasStation.put(fields.getId(), gasStations.size() - 1);
                 }
 
-                gasStations.get(mapGasStation.get(fields.getId())).addFuel(fuel);
+                gasStations.get(mapGasStation.get(fields.getId())).addFuel(fuel.getName(),fuel);
             }
 
         }

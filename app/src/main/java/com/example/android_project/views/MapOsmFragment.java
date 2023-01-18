@@ -43,6 +43,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.search.SearchBar;
 import com.google.android.material.search.SearchView;
@@ -79,7 +80,6 @@ public class MapOsmFragment extends Fragment {
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
 
-    private Location userLocation;
     private Marker userMarker;
     private Marker searchMarker;
 
@@ -135,6 +135,8 @@ public class MapOsmFragment extends Fragment {
                 drawGasStationMarkers(gasStations);
             }
         });
+
+        mapViewModel.getUserLocation().observe(requireActivity(), this::drawUserMarker);
     }
 
     @Override
@@ -167,25 +169,34 @@ public class MapOsmFragment extends Fragment {
 
         FrameLayout bottomSheet = requireView().findViewById(R.id.map_standard_bottom_sheet);
         RecyclerView bottomSheetRecyclerView = requireView().findViewById(R.id.map_bottom_sheet_recycler_view);
+        SearchBar searchBar = requireView().findViewById(R.id.map_search_bar);
+        SearchView searchView = requireView().findViewById(R.id.map_search_view);
+        RecyclerView recyclerView = requireView().findViewById(R.id.map_rv_search_result);
+        FloatingActionButton floatingActionButton = requireView().findViewById(R.id.map_fab_location);
+        ExtendedFloatingActionButton extendedFloatingActionButton =
+                requireView().findViewById(R.id.map_fab_list_gas_station);
+
+        floatingActionButton.setOnClickListener(view1 -> this.zoomOnCurrentLocation());
 
         bottomSheet.setVisibility(View.INVISIBLE);
-
         mapViewModel.getSelectedStation().observe(getViewLifecycleOwner(), gasStation -> {
             if (gasStation != null) {
                 BottomSheetBehavior<FrameLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
                 standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                bottomSheetRecyclerView.setAdapter(new GasStationInfoAdapter(gasStation));
-                bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
                 bottomSheet.setVisibility(View.VISIBLE);
+                GasStationInfoAdapter gasStationInfoAdapter = new GasStationInfoAdapter(gasStation);
+                bottomSheetRecyclerView.setAdapter(gasStationInfoAdapter);
+                bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                mapViewModel.getDistanceBetweenLocationAndGasStation(gasStation).observe(getViewLifecycleOwner(), aDouble -> {
+                    gasStationInfoAdapter.notifyItemChanged(0);
+                });
+
             } else {
                 bottomSheet.setVisibility(View.INVISIBLE);
             }
         });
 
-        SearchBar searchBar = requireView().findViewById(R.id.map_search_bar);
-        SearchView searchView = requireView().findViewById(R.id.map_search_view);
-        RecyclerView recyclerView = requireView().findViewById(R.id.map_rv_search_result);
-
+        // Set the list of result for the search and its ClickListener
         mapViewModel.getListResultSearch().observe(getViewLifecycleOwner(), searchAddresses -> {
             recyclerView.setAdapter(new SearchAddressListAdapter(searchAddresses, position -> {
                 SearchAddress searchAddress = searchAddresses.get(position);
@@ -220,6 +231,7 @@ public class MapOsmFragment extends Fragment {
                         }
                 );
 
+        // Behavior when the search is launched
         searchView.getEditText()
                 .setOnEditorActionListener(
                         (v, actionId, event) -> {
@@ -230,6 +242,7 @@ public class MapOsmFragment extends Fragment {
                             return false;
                         });
 
+        // Behavior when the profile icon is clicked on the searchbar
         searchBar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.accountIcon) {
                 MenuBottomSheetFragment modalBottomSheet = new MenuBottomSheetFragment();
@@ -238,8 +251,10 @@ public class MapOsmFragment extends Fragment {
             return true;
         });
 
-        FloatingActionButton floatingActionButton = requireView().findViewById(R.id.map_fab_location);
-        floatingActionButton.setOnClickListener(view1 -> this.zoomOnCurrentLocation());
+        extendedFloatingActionButton.setOnClickListener(view1 -> {
+            ListStationBottomSheetFragment modalBottomSheet = new ListStationBottomSheetFragment();
+            modalBottomSheet.show(requireActivity().getSupportFragmentManager(), ListStationBottomSheetFragment.TAG);
+        });
 
         locationCallback = new LocationCallback() {
             @Override
@@ -250,7 +265,7 @@ public class MapOsmFragment extends Fragment {
 
                 Location location = locationResult.getLastLocation();
 
-                setLocationAndMarker(location);
+                setLocation(location);
             }
         };
 
@@ -268,7 +283,7 @@ public class MapOsmFragment extends Fragment {
                     .addOnSuccessListener(requireActivity(), location -> {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            this.setLocationAndMarker(location);
+                            this.setLocation(location);
                             this.zoomOnCurrentLocation();
                         } else {
                             zoomOnFrance();
@@ -322,7 +337,7 @@ public class MapOsmFragment extends Fragment {
             mapViewModel.updateListStationsByLocation(
                     (float) box.getCenterLatitude(),
                     (float) box.getCenterLongitude(),
-                    dist[0]
+                    dist[0]/2
             ).observe(getViewLifecycleOwner(), gasStations -> {
             });
         }
@@ -330,7 +345,7 @@ public class MapOsmFragment extends Fragment {
 
     }
 
-    private void drawUserMarker() {
+    private void drawUserMarker(Location userLocation) {
         if (userLocation != null && mapView != null) {
             GeoPoint markerPoint = new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
 
@@ -352,6 +367,7 @@ public class MapOsmFragment extends Fragment {
 
             userMarker.setPosition(markerPoint);
 
+            mapView.invalidate();
         }
     }
 
@@ -379,26 +395,14 @@ public class MapOsmFragment extends Fragment {
         mapView.invalidate();
     }
 
-    private void setLocationAndMarker(Location location) {
+    private void setLocation(Location location) {
         if (location != null) {
-            userLocation = location;
-
-            if (userMarker != null) {
-                userMarker.setPosition(
-                        new GeoPoint(
-                                location.getLatitude(),
-                                location.getLongitude()
-                        )
-                );
-            } else {
-                drawUserMarker();
-            }
-
-            mapView.invalidate();
+            this.mapViewModel.setUserLocation(location);
         }
     }
 
     private void zoomOnCurrentLocation() {
+        Location userLocation = mapViewModel.getUserLocation().getValue();
         if (userLocation != null) {
             GeoPoint markerPoint = new GeoPoint(
                     userLocation.getLatitude(),
