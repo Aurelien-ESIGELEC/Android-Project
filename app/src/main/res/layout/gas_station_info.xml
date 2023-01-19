@@ -30,9 +30,13 @@
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/station_item_chips_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:selectionRequired="true"
+        app:singleSelection="true" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/station_rv_fuel_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

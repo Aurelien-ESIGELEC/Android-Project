@@ -9,40 +9,37 @@
 
         android:id="@+id/station_fuel_tv_date"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:text="@string/string_base"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+        android:gravity="center_vertical"
+        android:text="@string/fuel_date_eu"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
     <TextView
         android:id="@+id/station_fuel_tv_price"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/station_city"
-        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
-
-    <LinearLayout
-        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:text="@string/fuel_price_euro"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/thumb_up_off" />
+    <ImageButton
+        android:id="@+id/station_fuel_ibtn_up"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_weight="0.5"
+        app:srcCompat="@drawable/thumb_up_off" />
 
-        <ImageButton
-            android:id="@+id/imageButton2"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/thumb_down_off" />
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/station_fuel_ibtn_down"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_weight="0.5"
+        app:srcCompat="@drawable/thumb_down_off" />
 
 </LinearLayout>

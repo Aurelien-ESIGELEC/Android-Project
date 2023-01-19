@@ -6,5 +6,6 @@
     <string name="map_show_list">Show list</string>
     <string name="map_hide_list">Hide list</string>
     <string name="station_city" translatable="false">%1$s %2$s</string>
-    <string name="fuel_price" translatable="false">%1$1.3f €</string>
+    <string name="fuel_price_euro" translatable="false">%1$1.3f €</string>
+    <string name="fuel_date_eu" translatable="false">%td/%tm/%ty</string>
 </resources>

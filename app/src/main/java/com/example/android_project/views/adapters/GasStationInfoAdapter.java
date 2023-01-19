@@ -7,15 +7,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.fuel_price.GasStation;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+
+import java.util.Arrays;
+import java.util.Set;
 
 public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAdapter.ViewHolder> {
 
     private final GasStation gasStation;
     private Double distance;
+
+    private String fuelType;
 
     /**
      * Initialize the dataset of the Adapter
@@ -26,6 +34,7 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
     public GasStationInfoAdapter(GasStation gasStation, Double distance) {
         this.gasStation = gasStation;
         this.distance = distance;
+        this.fuelType = "";
     }
 
     public GasStationInfoAdapter(GasStation gasStation) {
@@ -41,6 +50,10 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
         private final TextView tvCity;
         private final TextView tvDistance;
 
+        private final RecyclerView rvFuelList;
+
+        private ChipGroup chipGroup;
+
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
@@ -48,6 +61,15 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
             tvAddress = view.findViewById(R.id.station_fuel_tv_date);
             tvCity = view.findViewById(R.id.station_fuel_tv_price);
             tvDistance = view.findViewById(R.id.station_km);
+
+            rvFuelList = view.findViewById(R.id.station_rv_fuel_list);
+
+            chipGroup = view.findViewById(R.id.station_item_chips_group);
+
+        }
+
+        public ChipGroup getChipGroup() {
+            return chipGroup;
         }
 
         public TextView getTvAddress() {
@@ -60,6 +82,10 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
 
         public TextView getTvDistance() {
             return tvDistance;
+        }
+
+        public RecyclerView getRvFuelList() {
+            return rvFuelList;
         }
     }
 
@@ -90,6 +116,25 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
             viewHolder.getTvDistance().setText(context.getString(R.string.map_kilometer, distance));
         }
 
+        RecyclerView rv = viewHolder.getRvFuelList();
+
+        ChipGroup cgFuelType = viewHolder.getChipGroup();
+
+        for (String fuelType: gasStation.getFuelList().keySet()) {
+            Chip chip = new Chip(context);
+            chip.setChecked(true);
+            chip.setCheckable(true);
+            chip.setText(fuelType);
+            chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                if (isChecked) {
+                    this.fuelType = fuelType;
+                }
+            });
+            cgFuelType.addView(chip);
+        }
+
+//        rv.setAdapter(new GasStationFuelAdapter(gasStation.getFuelList().get(fuelType)));
+//        rv.setLayoutManager(new LinearLayoutManager(context));
     }
 
 

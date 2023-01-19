@@ -37,7 +37,6 @@ public class RegisterPart2Fragment extends Fragment {
 
     private static final String TAG = "RegisterPart2Fragment";
     private AuthViewModel authViewModel;
-
     private CheckBox                cbFriendNotification;
     private CheckBox                cbFavoriteNotification;
     private RadioGroup              rgSharing;
