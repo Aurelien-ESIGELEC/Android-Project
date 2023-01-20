@@ -27,16 +27,20 @@
         android:text="@string/map_kilometer"
         android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/station_item_chips_group"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/station_tabs_fuels"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:selectionRequired="true"
-        app:singleSelection="true" />
+        app:tabMode="scrollable"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/station_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/station_rv_fuel_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 </LinearLayout>

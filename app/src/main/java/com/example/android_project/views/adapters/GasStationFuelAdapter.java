@@ -33,6 +33,8 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         this.fuelList = fuelList;
     }
 
+    public GasStationFuelAdapter() {super();}
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
@@ -124,7 +126,7 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return fuelList.size();
+        return fuelList != null ? fuelList.size() : 0;
     }
 
 }

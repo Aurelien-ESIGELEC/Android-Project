@@ -7,16 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.android_project.R;
+import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.tabs.TabLayout;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAdapter.ViewHolder> {
 
@@ -52,7 +53,9 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
 
         private final RecyclerView rvFuelList;
 
-        private ChipGroup chipGroup;
+        private ViewPager2 viewPager;
+
+        private TabLayout tabs;
 
         public ViewHolder(View view) {
             super(view);
@@ -64,12 +67,17 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
 
             rvFuelList = view.findViewById(R.id.station_rv_fuel_list);
 
-            chipGroup = view.findViewById(R.id.station_item_chips_group);
+            viewPager = view.findViewById(R.id.station_view_pager);
 
+            tabs = view.findViewById(R.id.station_tabs_fuels);
         }
 
-        public ChipGroup getChipGroup() {
-            return chipGroup;
+        public TabLayout getTabs() {
+            return tabs;
+        }
+
+        public ViewPager2 getViewPager() {
+            return viewPager;
         }
 
         public TextView getTvAddress() {
@@ -116,22 +124,50 @@ public class GasStationInfoAdapter extends RecyclerView.Adapter<GasStationInfoAd
             viewHolder.getTvDistance().setText(context.getString(R.string.map_kilometer, distance));
         }
 
-        RecyclerView rv = viewHolder.getRvFuelList();
+        TabLayout tabLayout = viewHolder.getTabs();
+        ViewPager2 viewPager2 = viewHolder.getViewPager();
+        RecyclerView recyclerView = viewHolder.getRvFuelList();
 
-        ChipGroup cgFuelType = viewHolder.getChipGroup();
+        recyclerView.setAdapter(new GasStationFuelAdapter());
 
-        for (String fuelType: gasStation.getFuelList().keySet()) {
-            Chip chip = new Chip(context);
-            chip.setChecked(true);
-            chip.setCheckable(true);
-            chip.setText(fuelType);
-            chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                if (isChecked) {
-                    this.fuelType = fuelType;
-                }
-            });
-            cgFuelType.addView(chip);
+        viewPager2.setAdapter(recyclerView.getAdapter());
+
+        for (String fuel: gasStation.getFuelList().keySet()) {
+            TabLayout.Tab tab = tabLayout.newTab();
+            tab.setText(fuel);
+            tabLayout.addTab(tab);
         }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                List<Fuel> fuelList = gasStation.getFuelList().get(Objects.requireNonNull(tab.getText()).toString());
+                ((GasStationFuelAdapter) Objects.requireNonNull(viewPager2.getAdapter())).setFuelList(fuelList);
+
+                viewPager2.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+
+        });
+
+//        for (String fuelType: gasStation.getFuelList().keySet()) {
+//            Chip chip = new Chip(context);
+//            chip.setChecked(true);
+//            chip.setCheckable(true);
+//            chip.setText(fuelType);
+//            chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+//                if (isChecked) {
+//                    this.fuelType = fuelType;
+//                }
+//            });
+//            cgFuelType.addView(chip);
+//        }
 
 //        rv.setAdapter(new GasStationFuelAdapter(gasStation.getFuelList().get(fuelType)));
 //        rv.setLayoutManager(new LinearLayoutManager(context));
