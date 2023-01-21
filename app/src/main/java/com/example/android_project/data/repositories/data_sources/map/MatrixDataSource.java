@@ -33,7 +33,7 @@ public class MatrixDataSource {
 
     public MatrixDataSource() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://openrouteservice.org")
+                .baseUrl("https://api.openrouteservice.org")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -51,6 +51,8 @@ public class MatrixDataSource {
                 .setMetrics(Arrays.asList("distance", "duration"))
                 .setUnits("km");
 
+        Log.d(TAG, "updateDistanceBetweenPoints: " + matrixRequestBody);
+
         executorService.execute(() -> matrixService
                 .getDistanceBetweenPoint(matrixRequestBody)
                 .enqueue(new Callback<MatrixInfo>() {
@@ -64,6 +66,7 @@ public class MatrixDataSource {
 
                     @Override
                     public void onFailure(Call<MatrixInfo> call, Throwable t) {
+                        Log.d(TAG, "onFailure: "+ t);
                         matrixInfoMutableLiveData.postValue(null);
                     }
                 })

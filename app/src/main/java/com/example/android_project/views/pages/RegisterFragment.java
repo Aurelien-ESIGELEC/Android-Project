@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.pages;
 
 import android.os.Bundle;
 

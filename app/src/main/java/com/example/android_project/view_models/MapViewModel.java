@@ -8,15 +8,12 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.android_project.api.nominatim.pojo.NominatimAddress;
 import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.data.repositories.MapRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class MapViewModel extends ViewModel {
 
@@ -54,15 +51,12 @@ public class MapViewModel extends ViewModel {
 
     public LiveData<Double> getDistanceBetweenLocationAndGasStation(GasStation gasStation) {
         Location sourceLocation = userLocation.getValue();
-        if (sourceLocation != null) {
-            return this.mapRepository.getDistanceBetweenPoints(
-                    sourceLocation.getLatitude(),
-                    sourceLocation.getLongitude(),
-                    gasStation.getLat(),
-                    gasStation.getLon()
-            );
-        }
-        return null;
+        return this.mapRepository.getDistanceBetweenPoints(
+                sourceLocation.getLatitude(),
+                sourceLocation.getLongitude(),
+                gasStation.getLat(),
+                gasStation.getLon()
+        );
     }
 
     public LiveData<List<GasStation>> updateListStationsByLocation(float lat, float lon, float dist) {

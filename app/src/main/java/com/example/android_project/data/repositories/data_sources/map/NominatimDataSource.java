@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.api.nominatim.NominatimService;
-import com.example.android_project.api.nominatim.pojo.NominatimAddress;
+import com.example.android_project.api.nominatim.pojo.NominatimSearch;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +22,7 @@ public class NominatimDataSource {
 
     private static final String TAG = "NominatimDataSource";
     private final NominatimService nominatimService;
-    private final MutableLiveData<List<NominatimAddress>> nominatimAddressLiveData;
+    private final MutableLiveData<List<NominatimSearch>> nominatimAddressLiveData;
     private final ExecutorService executorService;
 
     public NominatimDataSource() {
@@ -42,11 +42,11 @@ public class NominatimDataSource {
                 nominatimService
                         .getAddressBySearch(search)
                         .enqueue(
-                                new Callback<List<NominatimAddress>>() {
+                                new Callback<List<NominatimSearch>>() {
                                     @Override
                                     public void onResponse(
-                                            @NonNull Call<List<NominatimAddress>> call,
-                                            @NonNull Response<List<NominatimAddress>> response
+                                            @NonNull Call<List<NominatimSearch>> call,
+                                            @NonNull Response<List<NominatimSearch>> response
                                     ) {
                                         Log.d(TAG, "onResponse: " + response);
                                         if (response.isSuccessful()) {
@@ -56,7 +56,7 @@ public class NominatimDataSource {
 
                                     @Override
                                     public void onFailure(
-                                            @NonNull Call<List<NominatimAddress>> call,
+                                            @NonNull Call<List<NominatimSearch>> call,
                                             @NonNull Throwable t
                                     ) {
                                         nominatimAddressLiveData.setValue(null);
@@ -66,7 +66,7 @@ public class NominatimDataSource {
         );
     }
 
-    public MutableLiveData<List<NominatimAddress>> getNominatimAddressLiveData() {
+    public MutableLiveData<List<NominatimSearch>> getNominatimAddressLiveData() {
         return nominatimAddressLiveData;
     }
 }

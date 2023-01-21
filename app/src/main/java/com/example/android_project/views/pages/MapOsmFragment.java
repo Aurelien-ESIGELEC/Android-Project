@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.pages;
 
 import static com.example.android_project.utils.Utils.createCustomIcon;
 
@@ -15,12 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -34,8 +36,10 @@ import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.view_models.AuthViewModel;
 import com.example.android_project.view_models.MapViewModel;
-import com.example.android_project.views.adapters.GasStationInfoAdapter;
 import com.example.android_project.views.adapters.SearchAddressListAdapter;
+import com.example.android_project.views.bottom_sheets.GasStationBottomSheetFragment;
+import com.example.android_project.views.bottom_sheets.ListStationBottomSheetFragment;
+import com.example.android_project.views.bottom_sheets.MenuBottomSheetFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -45,8 +49,10 @@ import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.search.SearchBar;
 import com.google.android.material.search.SearchView;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
@@ -64,6 +70,7 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +79,7 @@ public class MapOsmFragment extends Fragment {
 
     private static final String TAG = "MapOsmFragment";
 
-    protected static final int DEFAULT_INACTIVITY_DELAY_IN_MILLISECOND = 2000;
+    protected static final int DEFAULT_INACTIVITY_DELAY_IN_MILLISECOND = 1000;
 
     private ActivityResultLauncher<String[]> activityResultLauncher;
 
@@ -84,9 +91,12 @@ public class MapOsmFragment extends Fragment {
     private Marker searchMarker;
 
     private MapView mapView;
-    private AuthViewModel authViewModel;
 
+    // View models
+    private AuthViewModel authViewModel;
     private MapViewModel mapViewModel;
+
+    private LinearProgressIndicator progressIndicator;
 
     private RadiusMarkerClusterer radiusMarkerClusterer;
 
@@ -132,6 +142,8 @@ public class MapOsmFragment extends Fragment {
 
         mapViewModel.getGasStations().observe(this, gasStations -> {
             if (gasStations != null && !gasStations.isEmpty()) {
+                Handler handler = new Handler();
+                handler.postDelayed(() -> progressIndicator.setVisibility(View.INVISIBLE), 500);
                 drawGasStationMarkers(gasStations);
             }
         });
@@ -167,8 +179,6 @@ public class MapOsmFragment extends Fragment {
             }
         });
 
-        FrameLayout bottomSheet = requireView().findViewById(R.id.map_standard_bottom_sheet);
-        RecyclerView bottomSheetRecyclerView = requireView().findViewById(R.id.map_bottom_sheet_recycler_view);
         SearchBar searchBar = requireView().findViewById(R.id.map_search_bar);
         SearchView searchView = requireView().findViewById(R.id.map_search_view);
         RecyclerView recyclerView = requireView().findViewById(R.id.map_rv_search_result);
@@ -176,23 +186,46 @@ public class MapOsmFragment extends Fragment {
         ExtendedFloatingActionButton extendedFloatingActionButton =
                 requireView().findViewById(R.id.map_fab_list_gas_station);
 
-        floatingActionButton.setOnClickListener(view1 -> this.zoomOnCurrentLocation());
+        progressIndicator = requireView().findViewById(R.id.map_station_progress_indicator);
+        progressIndicator.setVisibility(View.INVISIBLE);
 
-        bottomSheet.setVisibility(View.INVISIBLE);
+        floatingActionButton.setOnClickListener(view1 -> {
+            searchBar.setText("");
+            this.zoomOnCurrentLocation();
+        });
+
+        FrameLayout bottomSheet = requireView().findViewById(R.id.map_standard_bottom_sheet);
+
         mapViewModel.getSelectedStation().observe(getViewLifecycleOwner(), gasStation -> {
             if (gasStation != null) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.map_fcv_bottom_sheet, GasStationBottomSheetFragment.class, null)
+                        .commit();
+
+
                 BottomSheetBehavior<FrameLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
                 standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                bottomSheet.setVisibility(View.VISIBLE);
-                GasStationInfoAdapter gasStationInfoAdapter = new GasStationInfoAdapter(gasStation);
-                bottomSheetRecyclerView.setAdapter(gasStationInfoAdapter);
-                bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                mapViewModel.getDistanceBetweenLocationAndGasStation(gasStation).observe(getViewLifecycleOwner(), aDouble -> {
-                    gasStationInfoAdapter.notifyItemChanged(0);
-                });
 
-            } else {
-                bottomSheet.setVisibility(View.INVISIBLE);
+                mapView.addMapListener(new MapListener() {
+                    @Override
+                    public boolean onScroll(ScrollEvent event) {
+                        standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onZoom(ZoomEvent event) {
+                        standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        return false;
+                    }
+                });
+//                bottomSheet.setVisibility(View.VISIBLE);
+//                GasStationInfoAdapter gasStationInfoAdapter = new GasStationInfoAdapter(gasStation);
+//                bottomSheetRecyclerView.setAdapter(gasStationInfoAdapter);
+//                bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+//                mapViewModel.getDistanceBetweenLocationAndGasStation(gasStation).observe(getViewLifecycleOwner(), aDouble -> {
+//                    gasStationInfoAdapter.notifyItemChanged(0);
+//                });
             }
         });
 
@@ -252,8 +285,17 @@ public class MapOsmFragment extends Fragment {
         });
 
         extendedFloatingActionButton.setOnClickListener(view1 -> {
-            ListStationBottomSheetFragment modalBottomSheet = new ListStationBottomSheetFragment();
-            modalBottomSheet.show(requireActivity().getSupportFragmentManager(), ListStationBottomSheetFragment.TAG);
+            if (mapViewModel.getGasStations().getValue() != null) {
+                ListStationBottomSheetFragment modalBottomSheet = new ListStationBottomSheetFragment();
+                modalBottomSheet.show(requireActivity().getSupportFragmentManager(), ListStationBottomSheetFragment.TAG);
+            } else {
+                Snackbar.make(
+                        view,
+                        "No station displayed",
+                        Snackbar.LENGTH_SHORT
+                ).show();
+            }
+
         });
 
         locationCallback = new LocationCallback() {
@@ -324,6 +366,7 @@ public class MapOsmFragment extends Fragment {
     private void getGasStationOnScreen(double zoomLevel) {
         Log.d(TAG, "getGasStationOnScreen: " +zoomLevel);
         if (zoomLevel >= 11) {
+            progressIndicator.setVisibility(View.VISIBLE);
             BoundingBox box = mapView.getProjection().getBoundingBox();
             float[] dist = new float[1];
             Location.distanceBetween(
@@ -338,8 +381,7 @@ public class MapOsmFragment extends Fragment {
                     (float) box.getCenterLatitude(),
                     (float) box.getCenterLongitude(),
                     dist[0]/2
-            ).observe(getViewLifecycleOwner(), gasStations -> {
-            });
+            ).observe(getViewLifecycleOwner(), gasStations -> {});
         }
 
 

@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.pages;
 
 import android.os.Bundle;
 
@@ -24,7 +24,6 @@ import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;

@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:foregroundGravity="bottom"
     android:orientation="vertical"
-    tools:context=".views.MapOsmFragment">
+    tools:context=".views.pages.MapOsmFragment">
 
     <org.osmdroid.views.MapView
         android:id="@+id/map_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+    </org.osmdroid.views.MapView>
 
     <com.google.android.material.search.SearchBar
         android:id="@+id/map_search_bar"
@@ -20,33 +23,32 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:hint="@string/map_search_hint"
-        app:menu="@menu/osm_top_bar_menu"/>
-
+        app:menu="@menu/osm_top_bar_menu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/map_fab_location"
+        style="?attr/floatingActionButtonSecondaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchorGravity="top|end"
-        app:useCompatPadding="true"
-        android:layout_gravity="top"
-        app:layout_anchor="@id/map_fab_list_gas_station"
-        style="?attr/floatingActionButtonSecondaryStyle"
         android:contentDescription="description"
-        app:srcCompat="@drawable/my_location"/>
+        app:layout_anchor="@id/map_fab_list_gas_station"
+        app:layout_anchorGravity="top|end"
+        android:layout_gravity="top"
+
+        app:srcCompat="@drawable/my_location"
+        app:useCompatPadding="true" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/map_fab_list_gas_station"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="20dp"
         android:contentDescription="description"
         android:text="@string/map_show_list"
         app:icon="@drawable/list"
         app:layout_anchor="@id/map_standard_bottom_sheet"
         app:layout_anchorGravity="top|end"
+        android:layout_gravity="top"
         app:useCompatPadding="true" />
 
     <FrameLayout
@@ -54,8 +56,7 @@
         style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="30dp"
+        app:behavior_peekHeight="25dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -63,17 +64,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/map_bottom_sheet_recycler_view"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="30dp"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map_fcv_bottom_sheet"
+            android:layout_marginVertical="20dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-             />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/map_station_progress_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="1dp"
+        android:layout_gravity="bottom"
+        android:foregroundGravity="bottom"
+        android:indeterminate="true"
+        app:layout_anchorGravity="bottom" />
 
     <com.google.android.material.search.SearchView
         android:id="@+id/map_search_view"

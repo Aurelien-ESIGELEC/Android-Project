@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.pages;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.android_project.R;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.shape.MaterialShapeDrawable;
 
 /**
  * A simple {@link DialogFragment} subclass.
@@ -43,8 +46,12 @@ public class SettingsFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageButton btnBackArrow = requireView().findViewById(R.id.settings_btn_back_arrow);
+        AppBarLayout appBarLayout = requireView().findViewById(R.id.settings_app_bar_layout);
+        MaterialToolbar topAppBar = requireView().findViewById(R.id.settings_top_app_bar);
 
-        btnBackArrow.setOnClickListener(this::onBackArrowClick);
+        appBarLayout.setStatusBarForeground(
+                MaterialShapeDrawable.createWithElevationOverlay(requireContext()));
+
+        topAppBar.setNavigationOnClickListener(this::onBackArrowClick);
     }
 }

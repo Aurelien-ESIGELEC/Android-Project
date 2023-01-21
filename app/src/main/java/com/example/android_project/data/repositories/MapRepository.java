@@ -8,10 +8,9 @@ import androidx.lifecycle.Transformations;
 import com.example.android_project.api.fuel_price.pojo.Fields;
 import com.example.android_project.api.fuel_price.pojo.FuelPrices;
 import com.example.android_project.api.fuel_price.pojo.Record;
-import com.example.android_project.api.matrix.pojo.response.MatrixInfo;
 import com.example.android_project.api.nominatim.pojo.Address;
 import com.example.android_project.api.nominatim.pojo.Namedetails;
-import com.example.android_project.api.nominatim.pojo.NominatimAddress;
+import com.example.android_project.api.nominatim.pojo.NominatimSearch;
 import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
@@ -43,7 +42,7 @@ public class MapRepository {
 
     public LiveData<List<SearchAddress>> getAddressBySearch(String search) {
         this.nominatimDataSource.getAddressBySearch(search);
-        LiveData<List<NominatimAddress>> nominatimAddressLiveDataLiveData = nominatimDataSource.getNominatimAddressLiveData();
+        LiveData<List<NominatimSearch>> nominatimAddressLiveDataLiveData = nominatimDataSource.getNominatimAddressLiveData();
         return Transformations.map(
                 nominatimAddressLiveDataLiveData,
                 this::transformNominatimAddressesToAddresses);
@@ -65,7 +64,8 @@ public class MapRepository {
     }
 
     public LiveData<Double> getDistanceBetweenPoints(double sourceLat, double sourceLon, double destLat, double destLon) {
-        this.matrixDataSource.updateDistanceBetweenPoints(Arrays.asList(sourceLat, sourceLon), Arrays.asList(destLat, destLon));
+        this.matrixDataSource.updateDistanceBetweenPoints(Arrays.asList(sourceLon, sourceLat), Arrays.asList(destLon, destLat));
+        Log.d(TAG, "getDistanceBetweenPoints: Here");
         return Transformations.map(
                 matrixDataSource.getMatrixInfoMutableLiveData(), input -> input.getDistances().get(0).get(0));
     }
@@ -108,16 +108,16 @@ public class MapRepository {
         return gasStations;
     }
 
-    private List<SearchAddress> transformNominatimAddressesToAddresses(List<NominatimAddress> nominatimAddressList) {
+    private List<SearchAddress> transformNominatimAddressesToAddresses(List<NominatimSearch> nominatimSearchList) {
         List<SearchAddress> searchAddressList = new ArrayList<>();
-        for (NominatimAddress nominatimAddress : nominatimAddressList) {
+        for (NominatimSearch nominatimSearch : nominatimSearchList) {
             SearchAddress searchAddress = new SearchAddress()
-                    .setLat(Double.parseDouble(nominatimAddress.getLat()))
-                    .setLon(Double.parseDouble(nominatimAddress.getLon()))
-                    .setImportance(nominatimAddress.getImportance());
+                    .setLat(Double.parseDouble(nominatimSearch.getLat()))
+                    .setLon(Double.parseDouble(nominatimSearch.getLon()))
+                    .setImportance(nominatimSearch.getImportance());
 
-            Address address = nominatimAddress.getAddress();
-            Namedetails namedetails = nominatimAddress.getNames();
+            Address address = nominatimSearch.getAddress();
+            Namedetails namedetails = nominatimSearch.getNames();
 
             Log.d(TAG, "transformNominatimAddressesToAddresses: " + namedetails);
 

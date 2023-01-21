@@ -72,4 +72,15 @@ public class MatrixRequestBody {
         this.units = units;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "MatrixRequestBody{" +
+                "locations=" + locations +
+                ", destinations=" + destinations +
+                ", metrics=" + metrics +
+                ", sources=" + sources +
+                ", units='" + units + '\'' +
+                '}';
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.bottom_sheets;
 
 
 import android.os.Bundle;
@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,11 +21,18 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.android_project.R;
 import com.example.android_project.data.models.user.User;
 import com.example.android_project.view_models.AuthViewModel;
+import com.example.android_project.views.pages.MyFriendsFragment;
+import com.example.android_project.views.pages.SettingsFragment;
+import com.example.android_project.views.pages.StatsFragment;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
 
     public static final String TAG = "ModalBottomSheet";
+
+    BottomSheetBehavior bottomSheetBehavior;
 
     private AuthViewModel authViewModel;
 
@@ -40,6 +49,11 @@ public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     @Override
+    public int getTheme() {
+        return R.style.ThemeOverlay_App_BottomSheetDialogWithMargin;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -50,7 +64,14 @@ public class MenuBottomSheetFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        boolean isLargeLayout = getResources().getBoolean(R.bool.large_layout);
+        // Set the bottom sheet fragment to its full height
+        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            BottomSheetDialog dialog = (BottomSheetDialog) requireDialog();
+            FrameLayout bottomSheet = (FrameLayout) dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            behavior.setPeekHeight(0);
+        });
 
         tvUsername = requireView().findViewById(R.id.menu_tv_username);
         ImageButton btnClose = requireView().findViewById(R.id.list_station_btn_close);

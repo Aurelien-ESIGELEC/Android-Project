@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="map_logout">Logout</string>
-    <string name="map_kilometer" translatable="false">%1$d km</string>
+    <string name="map_kilometer" translatable="false">%1$.2f km</string>
     <string name="map_search_hint">Enter an searchAddress…</string>
     <string name="map_show_list">Show list</string>
     <string name="map_hide_list">Hide list</string>

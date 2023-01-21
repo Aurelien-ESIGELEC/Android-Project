@@ -1,4 +1,4 @@
-package com.example.android_project.views;
+package com.example.android_project.views.bottom_sheets;
 
 import android.os.Bundle;
 import android.util.Log;

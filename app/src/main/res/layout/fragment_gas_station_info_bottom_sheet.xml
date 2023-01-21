@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/station_fuel_tv_date"
+        android:id="@+id/station_tv_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/string_base"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
     <TextView
-        android:id="@+id/station_fuel_tv_price"
+        android:id="@+id/station_tv_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/station_city"
@@ -27,20 +26,25 @@
         android:text="@string/map_kilometer"
         android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/station_tabs_fuels"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable"/>
+        android:layout_height="match_parent">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/station_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/station_tabs_fuels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/station_rv_fuel_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/station_rv_fuel_list"
+            android:layout_width="match_parent"
+            app:layout_anchor="@id/station_tabs_fuels"
+            app:layout_anchorGravity="bottom"
+            android:layout_height="match_parent"
+            />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 </LinearLayout>

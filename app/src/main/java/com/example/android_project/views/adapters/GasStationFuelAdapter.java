@@ -95,7 +95,7 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         Context context = viewHolder.itemView.getContext();
         Fuel fuel = fuelList.get(position);
 
-        viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, Instant.now()));
+//        viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, Instant.now()));
         viewHolder.getTvPrice().setText(context.getString(R.string.fuel_price_euro, fuel.getPrice()));
 
         viewHolder.getIbtnUp().setOnClickListener(v -> {
