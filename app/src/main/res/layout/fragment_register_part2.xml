@@ -93,6 +93,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:tag="all"
                         android:text="@string/register2_share_data_public" />
 
                     <com.google.android.material.divider.MaterialDivider
@@ -104,6 +105,7 @@
                         style="@style/Widget.Material3.CompoundButton.RadioButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:tag="friends"
                         android:text="@string/register2_share_data_friends" />
 
                     <com.google.android.material.divider.MaterialDivider
@@ -116,6 +118,7 @@
                         style="@style/Widget.Material3.CompoundButton.RadioButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:tag="myself"
                         android:text="@string/register2_share_data_private" />
 
                     <com.google.android.material.divider.MaterialDivider
@@ -134,29 +137,10 @@
                     android:layout_weight="1"
                     android:text="@string/register2_fuel_type_title" />
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/register2_til_fuel_type"-->
-<!--                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content">-->
-
-<!--                    <AutoCompleteTextView-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:inputType="textAutoComplete"-->
-<!--                        app:simpleItems="@array/register2_fuel_type"-->
-<!--                        tools:ignore="SpeakableTextPresentCheck" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/register2_cg_fuel_type"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <!-- Chips can be declared here, or added dynamically. -->
-
-                </com.google.android.material.chip.ChipGroup>
-
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 

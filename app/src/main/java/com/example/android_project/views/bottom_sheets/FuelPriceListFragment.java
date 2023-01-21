@@ -1,11 +1,10 @@
 package com.example.android_project.views.bottom_sheets;
 
-import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,23 +12,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.view_models.MapViewModel;
 import com.example.android_project.views.adapters.GasStationFuelAdapter;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 import java.util.Objects;
 
-public class GasStationBottomSheetFragment extends Fragment {
+public class FuelPriceListFragment extends Fragment {
 
-    public static final String TAG = "BottomSheet";
+    public static final String TAG = "GasStationFragment";
 
     private MapViewModel mapViewModel;
 
@@ -91,8 +87,6 @@ public class GasStationBottomSheetFragment extends Fragment {
 //            ViewPager2 viewPager2 = requireView().findViewById(R.id.station_view_pager);
             RecyclerView recyclerView = requireView().findViewById(R.id.station_rv_fuel_list);
 
-            recyclerView.setAdapter(new GasStationFuelAdapter());
-
 //            viewPager2.setAdapter(recyclerView.getAdapter());
 
             for (String fuel: gasStation.getFuelList().keySet()) {
@@ -108,7 +102,11 @@ public class GasStationBottomSheetFragment extends Fragment {
                     List<Fuel> fuelList = gasStation.getFuelList().get(Objects.requireNonNull(tab.getText()).toString());
                     ((GasStationFuelAdapter) Objects.requireNonNull(recyclerView.getAdapter())).setFuelList(fuelList);
 
+                    Log.d(TAG, "onTabSelected: " + recyclerView.getAdapter().getItemCount());
+
+
                     recyclerView.getAdapter().notifyDataSetChanged();
+                    recyclerView.invalidate();
                 }
 
                 @Override

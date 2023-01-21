@@ -6,20 +6,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android_project.R;
+import com.example.android_project.views.adapters.FriendsViewPagerAdapter;
+import com.example.android_project.views.adapters.StatsViewPagerAdapter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link StatsFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class StatsFragment extends DialogFragment {
 
@@ -52,6 +55,18 @@ public class StatsFragment extends DialogFragment {
                 MaterialShapeDrawable.createWithElevationOverlay(requireContext()));
 
         topAppBar.setNavigationOnClickListener(this::onBackArrowClick);
+
+        TabLayout tabLayout = requireView().findViewById(R.id.stats_tab_layout);
+        ViewPager2 viewPager2 = requireView().findViewById(R.id.stats_view_pager);
+
+        StatsViewPagerAdapter statsViewPagerAdapter = new StatsViewPagerAdapter(requireActivity().getSupportFragmentManager(),getLifecycle());
+
+        String[] fuelList = getResources().getStringArray(R.array.app_fuel_type);
+
+        statsViewPagerAdapter.setFuelTypeList(fuelList);
+        viewPager2.setAdapter(statsViewPagerAdapter);
+
+        new TabLayoutMediator(tabLayout,viewPager2, (tab, position) -> tab.setText(fuelList[position])).attach();
     }
 
     private void onBackArrowClick(View view) {

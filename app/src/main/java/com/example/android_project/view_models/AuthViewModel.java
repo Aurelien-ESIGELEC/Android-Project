@@ -12,7 +12,6 @@ import com.example.android_project.data.models.user.User;
 import com.example.android_project.data.repositories.UserRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +63,14 @@ public class AuthViewModel extends ViewModel {
         errorConfirmPassword.setValue(null);
     }
 
+    public void resetFuelTypesList() {
+        fuelTypes.setValue(new ArrayList<>());
+    }
+
+    public void resetNotification() {
+        notifications.setValue(new ArrayList<>());
+    }
+
     public void resetPasswordError() {
         errorPassword.setValue(null);
     }
@@ -108,6 +115,7 @@ public class AuthViewModel extends ViewModel {
     }
 
     public void setCurrentSharing(String sharing) {
+        Log.d(TAG, "setCurrentSharing: " + sharing);
         this.sharing.setValue(sharing);
     }
 

@@ -13,9 +13,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -29,7 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.address.SearchAddress;
@@ -37,7 +37,7 @@ import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.view_models.AuthViewModel;
 import com.example.android_project.view_models.MapViewModel;
 import com.example.android_project.views.adapters.SearchAddressListAdapter;
-import com.example.android_project.views.bottom_sheets.GasStationBottomSheetFragment;
+import com.example.android_project.views.bottom_sheets.GasStationFragment;
 import com.example.android_project.views.bottom_sheets.ListStationBottomSheetFragment;
 import com.example.android_project.views.bottom_sheets.MenuBottomSheetFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -46,7 +46,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDragHandleView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -70,7 +73,6 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -194,17 +196,43 @@ public class MapOsmFragment extends Fragment {
             this.zoomOnCurrentLocation();
         });
 
-        FrameLayout bottomSheet = requireView().findViewById(R.id.map_standard_bottom_sheet);
+        LinearLayout bottomSheet = requireView().findViewById(R.id.map_standard_bottom_sheet);
+
+        BottomSheetDragHandleView bottomSheetDragHandleView = requireView().findViewById(R.id.drag_handle);
+        AppBarLayout appBarLayout = requireView().findViewById(R.id.station_app_bar_layout);
+
+        MaterialToolbar toolbar = requireView().findViewById(R.id.station_top_app_bar);
 
         mapViewModel.getSelectedStation().observe(getViewLifecycleOwner(), gasStation -> {
             if (gasStation != null) {
                 requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map_fcv_bottom_sheet, GasStationBottomSheetFragment.class, null)
+                        .replace(R.id.map_fcv_bottom_sheet, GasStationFragment.class, null)
                         .commit();
 
+                BottomSheetBehavior<LinearLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
 
-                BottomSheetBehavior<FrameLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                toolbar.setNavigationOnClickListener(view1 -> standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED));
+
+                //Manage the behavior of the bottom sheet when changing state
+                standardBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                        if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                            bottomSheetDragHandleView.setVisibility(View.GONE);
+                            toolbar.setTitle(gasStation.getAddress());
+                            appBarLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            bottomSheetDragHandleView.setVisibility(View.VISIBLE);
+                            appBarLayout.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+                    }
+                });
 
                 mapView.addMapListener(new MapListener() {
                     @Override
@@ -423,7 +451,16 @@ public class MapOsmFragment extends Fragment {
                 marker.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.secondary_dark_800));
 
                 marker.setOnMarkerClickListener((marker1, mapView1) -> {
+
+                    for (Marker marker2: radiusMarkerClusterer.getItems()) {
+                        marker2.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.secondary_dark_800));
+                    }
+
                     mapViewModel.setSelectedStation(gasStation);
+                    marker.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.teal_200));
+
+                    radiusMarkerClusterer.invalidate();
+                    mapView.invalidate();
                     return true;
                 });
 

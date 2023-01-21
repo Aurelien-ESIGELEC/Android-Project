@@ -17,23 +17,15 @@
 
     </org.osmdroid.views.MapView>
 
-    <com.google.android.material.search.SearchBar
-        android:id="@+id/map_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:hint="@string/map_search_hint"
-        app:menu="@menu/osm_top_bar_menu" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/map_fab_location"
         style="?attr/floatingActionButtonSecondaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="top"
         android:contentDescription="description"
         app:layout_anchor="@id/map_fab_list_gas_station"
         app:layout_anchorGravity="top|end"
-        android:layout_gravity="top"
 
         app:srcCompat="@drawable/my_location"
         app:useCompatPadding="true" />
@@ -42,22 +34,37 @@
         android:id="@+id/map_fab_list_gas_station"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
         android:contentDescription="description"
         android:text="@string/map_show_list"
         app:icon="@drawable/list"
-        app:layout_anchor="@id/map_standard_bottom_sheet"
-        app:layout_anchorGravity="top|end"
-        android:layout_gravity="top"
         app:useCompatPadding="true" />
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/map_standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        app:behavior_fitToContents="false"
         app:behavior_peekHeight="25dp"
+        android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/station_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/station_top_app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/keyboard_arrow_down" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
@@ -66,22 +73,36 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map_fcv_bottom_sheet"
-            android:layout_marginVertical="20dp"
-            android:layout_marginHorizontal="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
-    </FrameLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/map_station_progress_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:translationZ="1dp"
         android:layout_gravity="bottom"
         android:foregroundGravity="bottom"
         android:indeterminate="true"
+        android:translationZ="1dp"
         app:layout_anchorGravity="bottom" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/map_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+
+            android:hint="@string/map_search_hint"
+            app:menu="@menu/osm_top_bar_menu" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView
         android:id="@+id/map_search_view"

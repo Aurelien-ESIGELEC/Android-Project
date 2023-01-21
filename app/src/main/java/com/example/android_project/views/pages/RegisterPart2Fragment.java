@@ -36,12 +36,11 @@ import java.util.Objects;
 public class RegisterPart2Fragment extends Fragment {
 
     private static final String TAG = "RegisterPart2Fragment";
-    private AuthViewModel authViewModel;
+
+    private AuthViewModel           authViewModel;
     private CheckBox                cbFriendNotification;
     private CheckBox                cbFavoriteNotification;
     private RadioGroup              rgSharing;
-//    private TextInputLayout         tilFuelType;
-
     private ChipGroup               cgFuelType;
     private LinearProgressIndicator lpiProgressRegister;
 
@@ -63,12 +62,15 @@ public class RegisterPart2Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        authViewModel.resetFuelTypesList();
+        authViewModel.resetNotification();
+
         rgSharing = requireView().findViewById(R.id.register2_rg_sharing);
         cbFavoriteNotification = requireView().findViewById(R.id.register2_swc_fav_notification);
         cbFriendNotification = requireView().findViewById(R.id.register2_swc_friend_notification);
         cgFuelType = requireView().findViewById(R.id.register2_cg_fuel_type);
 
-        String [] fuelTypeArray = getResources().getStringArray(R.array.register2_fuel_type);
+        String [] fuelTypeArray = getResources().getStringArray(R.array.app_fuel_type);
 
         for (String fuelType: fuelTypeArray) {
             Chip chip = new Chip(requireContext());
@@ -101,7 +103,7 @@ public class RegisterPart2Fragment extends Fragment {
             if (isChecked)
             {
                 // Changes the textview's text to "Checked: example radiobutton text"
-                authViewModel.setCurrentSharing((String) checkedRadioButton.getText());
+                authViewModel.setCurrentSharing((String) checkedRadioButton.getTag());
             }
         });
 

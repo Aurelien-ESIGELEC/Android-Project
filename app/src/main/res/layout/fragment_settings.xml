@@ -1,24 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".views.pages.StatsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/settings_app_bar_layout"
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/settings_top_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/menu_settings"
-            app:navigationIcon="@drawable/arrow_back"/>
+            app:navigationIcon="@drawable/arrow_back"
+            app:title="@string/menu_settings" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/settings_progress_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="1dp"
+                    android:paddingRight="1dp">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        style="@style/TextAppearance.Material3.LabelLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/register2_notifications_title" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/settings_swc_fav_notification"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/register2_notification_fav_box" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:id="@+id/materialDivider3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <CheckBox
+                            android:id="@+id/settings_swc_friend_notification"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/register2_notification_friend_box" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:id="@+id/materialDivider4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        style="@style/TextAppearance.Material3.LabelLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="@string/register2_share_data_title" />
+
+                    <RadioGroup
+                        android:id="@+id/settings_rg_sharing"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/settings_rb_public"
+                            style="@style/Widget.Material3.CompoundButton.RadioButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:tag="all"
+                            android:text="@string/register2_share_data_public" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <RadioButton
+                            android:id="@+id/settings_rb_friends"
+                            style="@style/Widget.Material3.CompoundButton.RadioButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:tag="friends"
+                            android:text="@string/register2_share_data_friends" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:id="@+id/materialDivider2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <RadioButton
+                            android:id="@+id/settings_rb_private"
+                            style="@style/Widget.Material3.CompoundButton.RadioButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:tag="myself"
+                            android:text="@string/register2_share_data_private" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:id="@+id/materialDivider"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </RadioGroup>
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        style="@style/TextAppearance.Material3.LabelLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:text="@string/register2_fuel_type_title" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/settings_cg_fuel_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/register_btn_register"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/register2_finish_button"
+                    tools:ignore="DuplicateSpeakableTextCheck" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

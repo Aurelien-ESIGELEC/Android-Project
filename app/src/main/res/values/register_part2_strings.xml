@@ -9,12 +9,4 @@
     <string name="register2_share_data_friends">Friends and me</string>
     <string name="register2_fuel_type_title">Fuel type</string>
     <string name="register2_finish_button">Finish</string>
-    <string-array name="register2_fuel_type">
-        <item>Gazole</item>
-        <item>SP98</item>
-        <item>E10</item>
-        <item>SP95</item>
-        <item>E85</item>
-        <item>GPLc</item>
-    </string-array>
 </resources>

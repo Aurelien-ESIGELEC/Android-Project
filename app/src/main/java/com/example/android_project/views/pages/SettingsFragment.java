@@ -1,21 +1,26 @@
 package com.example.android_project.views.pages;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ImageButton;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android_project.R;
+import com.example.android_project.data.models.user.User;
+import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.shape.MaterialShapeDrawable;
 
 /**
@@ -23,11 +28,15 @@ import com.google.android.material.shape.MaterialShapeDrawable;
  */
 public class SettingsFragment extends DialogFragment {
 
+    private AuthViewModel authViewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar);
+
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
     }
 
     private void onBackArrowClick(View view) {
@@ -46,6 +55,11 @@ public class SettingsFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        authViewModel.resetFuelTypesList();
+        authViewModel.resetNotification();
+
+        User user = authViewModel.getUser().getValue();
+
         AppBarLayout appBarLayout = requireView().findViewById(R.id.settings_app_bar_layout);
         MaterialToolbar topAppBar = requireView().findViewById(R.id.settings_top_app_bar);
 
@@ -53,5 +67,95 @@ public class SettingsFragment extends DialogFragment {
                 MaterialShapeDrawable.createWithElevationOverlay(requireContext()));
 
         topAppBar.setNavigationOnClickListener(this::onBackArrowClick);
+
+        RadioGroup rgSharing = requireView().findViewById(R.id.settings_rg_sharing);
+        CheckBox cbFavoriteNotification = requireView().findViewById(R.id.settings_swc_fav_notification);
+        CheckBox cbFriendNotification = requireView().findViewById(R.id.settings_swc_friend_notification);
+        ChipGroup cgFuelType = requireView().findViewById(R.id.settings_cg_fuel_type);
+
+        String [] fuelTypeArray = getResources().getStringArray(R.array.app_fuel_type);
+        
+        RadioButton rbPublic = requireView().findViewById(R.id.settings_rb_public);
+        RadioButton rbFriends = requireView().findViewById(R.id.settings_rb_friends);
+        RadioButton rbPrivate = requireView().findViewById(R.id.settings_rb_private);
+        
+        if (user != null && user.getSharing() != null) {
+            switch (user.getSharing()) {
+                case "all":
+                    rbPublic.setChecked(true);
+                    break;
+                case "friends":
+                    rbFriends.setChecked(true);
+                    break;
+                case "myself":
+                    rbPrivate.setChecked(true);
+            }
+        }
+
+        for (String fuelType: fuelTypeArray) {
+
+            Chip chip = new Chip(requireContext());
+            chip.setText(fuelType);
+            chip.setCheckable(true);
+            chip.setCheckedIconResource(R.drawable.check);
+            chip.setCheckedIconVisible(true);
+            chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                if (isChecked) {
+                    authViewModel.addFuelType(fuelType);
+                } else {
+                    authViewModel.removeFuelType(fuelType);
+                }
+            });
+            if (user != null && user.getFuelTypes() != null && user.getFuelTypes().contains(fuelType)) {
+                chip.setChecked(true);
+            }
+            cgFuelType.addView(chip);
+        }
+
+        LinearProgressIndicator lpiProgressRegister = requireView().findViewById(R.id.settings_progress_indicator);
+        lpiProgressRegister.setVisibility(View.INVISIBLE);
+
+        rgSharing.setOnCheckedChangeListener( (radioGroup, radioButtonId) -> {
+
+            // This will get the radiobutton that has changed in its check state
+            RadioButton checkedRadioButton = radioGroup.findViewById(radioButtonId);
+
+            // This puts the value (true/false) into the variable
+            boolean isChecked = checkedRadioButton.isChecked();
+
+            // If the radiobutton that has changed in check state is now checked...
+            if (isChecked)
+            {
+                // Changes the textview's text to "Checked: example radiobutton text"
+                authViewModel.setCurrentSharing((String) checkedRadioButton.getText());
+            }
+        });
+
+        cbFavoriteNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
+            changeNotificationValues(isChecked, "favorites");
+        });
+
+        cbFriendNotification.setOnCheckedChangeListener((compoundButton, isChecked ) -> {
+            changeNotificationValues(isChecked, "friends");
+        });
+
+        if (user != null && user.getNotifications() != null) {
+            for (String notification: user.getNotifications()) {
+                if (notification.equals("favorites")) {
+                    cbFavoriteNotification.setChecked(true);
+                }
+                if (notification.equals("friends")) {
+                    cbFriendNotification.setChecked(true);
+                }
+            }
+        }
+    }
+
+    private void changeNotificationValues(Boolean isChecked, String text) {
+        if (isChecked) {
+            authViewModel.addNotification(text);
+        } else {
+            authViewModel.removeNotification(text);
+        }
     }
 }

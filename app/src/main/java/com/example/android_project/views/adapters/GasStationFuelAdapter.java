@@ -1,6 +1,7 @@
 package com.example.android_project.views.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,16 @@ import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAdapter.ViewHolder> {
 
+    private static final String TAG = "GasStationFuelAdapter";
     private List<Fuel> fuelList;
 
     /**
@@ -95,8 +101,21 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         Context context = viewHolder.itemView.getContext();
         Fuel fuel = fuelList.get(position);
 
-//        viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, Instant.now()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        //assuming year/month/date information is not important
+
+        LocalDateTime dateTime = fuel.getUpdateDate();
+        calendar.set(dateTime.getYear(), dateTime.getMonthValue() - 1, dateTime.getDayOfMonth());
+        Log.d(TAG, "onBindViewHolder: " + fuel);
+
+        viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, calendar));
         viewHolder.getTvPrice().setText(context.getString(R.string.fuel_price_euro, fuel.getPrice()));
+
+        if (fuel.getReliabilityIndex() == 100) {
+            viewHolder.getIbtnUp().setEnabled(false);
+            viewHolder.getIbtnDown().setEnabled(false);
+        }
 
         viewHolder.getIbtnUp().setOnClickListener(v -> {
             if (viewHolder.getIbtnUp().getDrawable() == AppCompatResources.getDrawable(context, R.drawable.thumb_up_off)) {

@@ -5,46 +5,51 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/station_tv_address"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/string_base"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
-
-    <TextView
-        android:id="@+id/station_tv_city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/station_city"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
-
-    <TextView
-        android:id="@+id/station_km"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/map_kilometer"
-        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/station_tabs_fuels"
+        android:layout_marginHorizontal="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/station_tv_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="scrollable" />
+            android:text="@string/string_base"
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/station_rv_fuel_list"
+        <TextView
+            android:id="@+id/station_tv_city"
             android:layout_width="match_parent"
-            app:layout_anchor="@id/station_tabs_fuels"
-            app:layout_anchorGravity="bottom"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="wrap_content"
+            android:text="@string/station_city"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/station_km"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:text="@string/map_kilometer"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            app:drawableStartCompat="@drawable/directions_car" />
+    </LinearLayout>
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/station_tabs_fuels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?attr/tabSecondaryStyle"
+        app:tabMode="scrollable" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/station_rv_fuel_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        app:layout_anchor="@id/station_tabs_fuels"
+        app:layout_anchorGravity="bottom" />
 
 
 </LinearLayout>
