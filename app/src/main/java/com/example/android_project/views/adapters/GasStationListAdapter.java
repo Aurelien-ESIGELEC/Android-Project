@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_project.R;
@@ -74,6 +75,7 @@ public class GasStationListAdapter extends RecyclerView.Adapter<GasStationListAd
     }
 
     // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
     public GasStationListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item

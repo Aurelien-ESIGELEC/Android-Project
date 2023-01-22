@@ -52,7 +52,7 @@
             tools:layout="@layout/fragment_stats" />
         <dialog
             android:id="@+id/menuBottomSheetFragment"
-            android:name="com.example.android_project.views.bottom_sheets.MenuBottomSheetFragment"
+            android:name="com.example.android_project.views.components.bottom_sheets.MenuBottomSheetFragment"
             android:label="MenuBottomSheetFragment"/>
         <fragment
             android:id="@+id/myFriendsFragment"

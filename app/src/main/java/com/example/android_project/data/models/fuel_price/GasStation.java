@@ -75,10 +75,17 @@ public class GasStation {
     }
 
     public void addFuel(String name, Fuel fuel) {
-        if (!fuelList.containsKey(name)) {
-            fuelList.put(name, new ArrayList<>());
+        if (!this.fuelList.containsKey(name)) {
+            this.fuelList.put(name, new ArrayList<>());
         }
-        Objects.requireNonNull(fuelList.get(name)).add(fuel);
+        Objects.requireNonNull(this.fuelList.get(name)).add(fuel);
+    }
+
+    public void addFuelList(String name, List<Fuel> fuelList) {
+        if (!this.fuelList.containsKey(name)) {
+            this.fuelList.put(name, new ArrayList<>());
+        }
+        Objects.requireNonNull(this.fuelList.get(name)).addAll(fuelList);
     }
 
     public HashMap<String, List<Fuel>> getFuelList() {

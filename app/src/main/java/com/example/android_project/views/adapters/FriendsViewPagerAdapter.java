@@ -7,8 +7,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.android_project.views.FollowerListFragment;
-import com.example.android_project.views.FriendsListFragment;
+import com.example.android_project.views.pages.FollowerListFragment;
+import com.example.android_project.views.pages.FriendsListFragment;
 
 public class FriendsViewPagerAdapter extends FragmentStateAdapter {
 

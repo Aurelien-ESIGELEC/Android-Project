@@ -7,9 +7,8 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.data.models.user.User;
-import com.example.android_project.data.repositories.data_sources.user.AuthenticationDataSource;
-import com.example.android_project.data.repositories.data_sources.user.UserRemoteDataSource;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.android_project.data.data_sources.user.AuthenticationDataSource;
+import com.example.android_project.data.data_sources.user.UserRemoteDataSource;
 
 public class UserRepository {
 

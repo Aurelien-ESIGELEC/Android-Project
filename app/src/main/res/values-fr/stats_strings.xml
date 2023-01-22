@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="stats_no_chosen">Aucun carburant selectionné</string>
     <string name="stats_avg_france">Prix moyen en France :</string>
-    <string name="stats_avg_county_or_city">Prix moyen en %1$s :</string>
+    <string name="stats_avg_county">Prix moyen en %1$s :</string>
+    <string name="stats_avg_city">Prix moyen à %1$s :</string>
 </resources>

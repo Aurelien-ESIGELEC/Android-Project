@@ -8,4 +8,5 @@
     <string name="station_city" translatable="false">%1$s %2$s</string>
     <string name="fuel_price_euro" translatable="false">%1$1.3f €</string>
     <string name="fuel_date_eu" translatable="false">%1$td/%1$tm/%1$ty</string>
+    <string name="fuel_add_text">Add a price</string>
 </resources>

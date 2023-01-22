@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="stats_no_chosen">No fuel chosen</string>
     <string name="stats_avg_france">Average price in France :</string>
-    <string name="stats_avg_county_or_city">Average price in %1$s :</string>
+    <string name="stats_avg_county">Average price in %1$s :</string>
+    <string name="stats_avg_city">Average price in %1$s :</string>
 </resources>

@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">Android-Project</string>
+    <string name="app_name" translatable="false">Gas The Price</string>
     <string name="form_hint_required">*Required</string>
     <string name="form_error_required">This field is required</string>
     <string name="app_retry_action">Retry</string>
     <string name="app_error_no_network">No internet connexion</string>
     <string name="app_logged_out">You have been logged out</string>
     <string name="string_base" translatable="false">%1$s</string>
+    <string name="app_add">Add</string>
+    <string name="app_cancel">Cancel</string>
     <string-array name="app_fuel_type">
         <item>Gazole</item>
         <item>SP98</item>

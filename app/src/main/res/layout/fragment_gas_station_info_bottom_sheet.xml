@@ -33,8 +33,8 @@
             android:text="@string/map_kilometer"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             app:drawableStartCompat="@drawable/directions_car" />
-    </LinearLayout>
 
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/station_tabs_fuels"
@@ -43,13 +43,10 @@
         style="?attr/tabSecondaryStyle"
         app:tabMode="scrollable" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/station_rv_fuel_list"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/station_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        app:layout_anchor="@id/station_tabs_fuels"
-        app:layout_anchorGravity="bottom" />
+        android:layout_height="match_parent"/>
 
 
 </LinearLayout>

@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -37,9 +36,9 @@ import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.view_models.AuthViewModel;
 import com.example.android_project.view_models.MapViewModel;
 import com.example.android_project.views.adapters.SearchAddressListAdapter;
-import com.example.android_project.views.bottom_sheets.GasStationFragment;
-import com.example.android_project.views.bottom_sheets.ListStationBottomSheetFragment;
-import com.example.android_project.views.bottom_sheets.MenuBottomSheetFragment;
+import com.example.android_project.views.components.bottom_sheets.GasStationFragment;
+import com.example.android_project.views.components.bottom_sheets.ListStationBottomSheetFragment;
+import com.example.android_project.views.components.bottom_sheets.MenuBottomSheetFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -83,7 +82,7 @@ public class MapOsmFragment extends Fragment {
 
     protected static final int DEFAULT_INACTIVITY_DELAY_IN_MILLISECOND = 1000;
 
-    private ActivityResultLauncher<String[]> activityResultLauncher;
+    private final ActivityResultLauncher<String[]> activityResultLauncher;
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -99,9 +98,7 @@ public class MapOsmFragment extends Fragment {
     private MapViewModel mapViewModel;
 
     private LinearProgressIndicator progressIndicator;
-
     private RadiusMarkerClusterer radiusMarkerClusterer;
-
     private HashMap<String, Marker> gasStationMarkerHashMap;
 
     public MapOsmFragment() {
@@ -210,7 +207,6 @@ public class MapOsmFragment extends Fragment {
                         .commit();
 
                 BottomSheetBehavior<LinearLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-                standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
 
                 toolbar.setNavigationOnClickListener(view1 -> standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED));
 
@@ -237,23 +233,21 @@ public class MapOsmFragment extends Fragment {
                 mapView.addMapListener(new MapListener() {
                     @Override
                     public boolean onScroll(ScrollEvent event) {
-                        standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        if (!event.getSource().isAnimating()) {
+                            standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        }
+
                         return false;
                     }
 
                     @Override
                     public boolean onZoom(ZoomEvent event) {
-                        standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        if (!event.getSource().isAnimating()) {
+                            standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        }
                         return false;
                     }
                 });
-//                bottomSheet.setVisibility(View.VISIBLE);
-//                GasStationInfoAdapter gasStationInfoAdapter = new GasStationInfoAdapter(gasStation);
-//                bottomSheetRecyclerView.setAdapter(gasStationInfoAdapter);
-//                bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-//                mapViewModel.getDistanceBetweenLocationAndGasStation(gasStation).observe(getViewLifecycleOwner(), aDouble -> {
-//                    gasStationInfoAdapter.notifyItemChanged(0);
-//                });
             }
         });
 
@@ -389,6 +383,16 @@ public class MapOsmFragment extends Fragment {
 
         radiusMarkerClusterer = new RadiusMarkerClusterer(requireContext());
         mapView.getOverlays().add(radiusMarkerClusterer);
+
+        mapViewModel.getZoomOnPoint().observe(getViewLifecycleOwner(), geoPoint -> {
+            IMapController mapController = mapView.getController();
+            mapController.animateTo(geoPoint, 17.0, 500L);
+
+            if (mapViewModel.getSelectedStation().getValue() != null) {
+                BottomSheetBehavior<LinearLayout> standardBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+                standardBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+            }
+        });
     }
 
     private void getGasStationOnScreen(double zoomLevel) {
@@ -457,7 +461,9 @@ public class MapOsmFragment extends Fragment {
                     }
 
                     mapViewModel.setSelectedStation(gasStation);
-                    marker.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.teal_200));
+                    marker.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.selected_cursor));
+
+                    mapViewModel.setZoomOnPoint(gasStation.getLat(), gasStation.getLon());
 
                     radiusMarkerClusterer.invalidate();
                     mapView.invalidate();
@@ -488,18 +494,14 @@ public class MapOsmFragment extends Fragment {
                     userLocation.getLongitude()
             );
             IMapController mapController = mapView.getController();
-            mapController.animateTo(markerPoint, 15.0, 1L);
+            mapController.animateTo(markerPoint, 15.0, 100L);
         }
     }
 
     private void zoomOnSearchedLocation(SearchAddress address) {
         if (address != null) {
-            GeoPoint markerPoint = new GeoPoint(
-                    address.getLat(),
-                    address.getLon()
-            );
-            IMapController mapController = mapView.getController();
-            mapController.animateTo(markerPoint, 15.0, 1L);
+            GeoPoint markerPoint = new GeoPoint(address.getLat(), address.getLon());
+            mapViewModel.setZoomOnPoint(markerPoint);
         }
     }
 

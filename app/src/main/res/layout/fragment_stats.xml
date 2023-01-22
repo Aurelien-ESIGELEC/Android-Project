@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".views.pages.StatsFragment"
-    android:orientation="vertical">
+    tools:context=".views.pages.StatsFragment">
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical">
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/stats_progress_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/stats_chip_group"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_avg_france"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/stats_tv_price_france"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fuel_price_euro" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/stats_tv_price_county_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_avg_county"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/stats_tv_price_county"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fuel_price_euro" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/stats_tv_price_city_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_avg_city"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/stats_tv_price_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/fuel_price_euro" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/stats_app_bar_layout"
@@ -22,15 +82,4 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/stats_tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable">
-    </com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/stats_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

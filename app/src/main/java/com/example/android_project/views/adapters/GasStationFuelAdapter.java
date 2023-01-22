@@ -14,20 +14,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.fuel_price.Fuel;
-import com.example.android_project.data.models.fuel_price.GasStation;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAdapter.ViewHolder> {
 
     private static final String TAG = "GasStationFuelAdapter";
     private List<Fuel> fuelList;
+
+    private boolean isUpToggled;
+    private boolean isDownToggled;
+
+    public GasStationFuelAdapter() {
+        super();
+        this.isUpToggled = false;
+        this.isDownToggled = false;
+    }
 
     /**
      * Initialize the dataset of the Adapter
@@ -36,10 +40,9 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
      * by RecyclerView
      */
     public GasStationFuelAdapter(List<Fuel> fuelList) {
+        this();
         this.fuelList = fuelList;
     }
-
-    public GasStationFuelAdapter() {super();}
 
     /**
      * Provide a reference to the type of views that you are using
@@ -103,43 +106,47 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
-        //assuming year/month/date information is not important
 
         LocalDateTime dateTime = fuel.getUpdateDate();
         calendar.set(dateTime.getYear(), dateTime.getMonthValue() - 1, dateTime.getDayOfMonth());
-        Log.d(TAG, "onBindViewHolder: " + fuel);
 
         viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, calendar));
         viewHolder.getTvPrice().setText(context.getString(R.string.fuel_price_euro, fuel.getPrice()));
 
-        if (fuel.getReliabilityIndex() == 100) {
+        if (!fuel.canBeUpdated()) {
             viewHolder.getIbtnUp().setEnabled(false);
             viewHolder.getIbtnDown().setEnabled(false);
         }
 
         viewHolder.getIbtnUp().setOnClickListener(v -> {
-            if (viewHolder.getIbtnUp().getDrawable() == AppCompatResources.getDrawable(context, R.drawable.thumb_up_off)) {
-                viewHolder.getIbtnUp().setImageDrawable( AppCompatResources.getDrawable(context, R.drawable.thumb_up));
+            isUpToggled = !isUpToggled;
+            if (isUpToggled) {
+                viewHolder.getIbtnUp().setImageResource( R.drawable.thumb_up);
             } else {
-                viewHolder.getIbtnUp().setImageDrawable( AppCompatResources.getDrawable(context, R.drawable.thumb_up_off));
+                viewHolder.getIbtnUp().setImageResource(R.drawable.thumb_up_off);
             }
-            
         });
 
         viewHolder.getIbtnDown().setOnClickListener(v -> {
-            if (viewHolder.getIbtnDown().getDrawable() == AppCompatResources.getDrawable(context, R.drawable.thumb_down_off)) {
-                viewHolder.getIbtnDown().setImageDrawable( AppCompatResources.getDrawable(context, R.drawable.thumb_down));
+            isDownToggled = !isDownToggled;
+            if (isDownToggled) {
+                viewHolder.getIbtnDown().setImageResource(R.drawable.thumb_down);
             } else {
-                viewHolder.getIbtnDown().setImageDrawable( AppCompatResources.getDrawable(context, R.drawable.thumb_down_off));
+                viewHolder.getIbtnDown().setImageResource(R.drawable.thumb_down_off);
             }
-
         });
 
     }
 
     public void setFuelList(List<Fuel> fuelList) {
         this.fuelList = fuelList;
-        this.notifyItemRangeChanged(0, this.fuelList.size());
+        this.notifyItemRangeChanged(0, fuelList.size());
+    }
+
+    public void addFuelList(List<Fuel> fuelList) {
+        int size = this.fuelList.size();
+        this.fuelList.addAll(fuelList);
+        this.notifyItemRangeChanged(size, fuelList.size());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

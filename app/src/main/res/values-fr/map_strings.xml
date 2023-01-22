@@ -4,4 +4,5 @@
     <string name="map_search_hint">Entrer une adresse…</string>
     <string name="map_show_list">Afficher la liste</string>
     <string name="map_hide_list">Cacher la liste</string>
+    <string name="fuel_add_text">Ajouter un prix</string>
 </resources>
