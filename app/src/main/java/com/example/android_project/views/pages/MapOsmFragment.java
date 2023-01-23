@@ -132,9 +132,22 @@ public class MapOsmFragment extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         locationRequest = new LocationRequest.Builder(1000)
-                .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setMinUpdateDistanceMeters(100)
                 .build();
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+
+                Location location = locationResult.getLastLocation();
+
+                setLocation(location);
+            }
+        };
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
@@ -319,19 +332,6 @@ public class MapOsmFragment extends Fragment {
             }
 
         });
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-
-                Location location = locationResult.getLastLocation();
-
-                setLocation(location);
-            }
-        };
 
         //load/initialize the osmdroid configuration, this can be done
         Context ctx = requireContext();

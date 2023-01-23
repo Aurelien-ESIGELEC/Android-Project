@@ -25,7 +25,6 @@ public class MapViewModel extends ViewModel {
     private final MutableLiveData<String> search;
 
     private final MutableLiveData<List<GasStation>> gasStations;
-
     private final MutableLiveData<GeoPoint> zoomOnPoint;
 
     private final MutableLiveData<List<SearchAddress>> listResultSearch;

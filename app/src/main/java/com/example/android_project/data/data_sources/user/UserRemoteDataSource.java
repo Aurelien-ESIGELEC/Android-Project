@@ -81,6 +81,25 @@ public class UserRemoteDataSource {
         return isEmailAlreadyInUse;
     }
 
+    public MutableLiveData<Boolean> addReview(User user) {
+        MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
+        db.collection("users")
+                .add(user)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.v("Firestore", user.toString());
+                        this.userMutableLiveData.setValue(user);
+                        isUserCreated.setValue(true);
+                        errorCodeLiveData.postValue(null);
+                    } else {
+                        isUserCreated.setValue(false);
+                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
+                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
+                    }
+                });
+        return isUserCreated;
+    }
+
     public MutableLiveData<Boolean> createUser(User user) {
         MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
         db.collection("users")

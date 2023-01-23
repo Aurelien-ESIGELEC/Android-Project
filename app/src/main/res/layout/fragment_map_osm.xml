@@ -65,7 +65,7 @@
         android:layout_height="match_parent"
         app:behavior_fitToContents="false"
         app:behavior_peekHeight="25dp"
-        android:elevation="10dp"
+        android:elevation="8dp"
         android:orientation="vertical"
         app:behavior_hideable="false"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -103,6 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:foregroundGravity="bottom"
+        android:elevation="9dp"
         android:indeterminate="true"
         android:translationZ="1dp"
         app:layout_anchorGravity="bottom" />
@@ -110,6 +111,7 @@
     <com.google.android.material.search.SearchView
         android:id="@+id/map_search_view"
         android:layout_width="match_parent"
+        android:elevation="10dp"
         android:layout_height="wrap_content"
         app:layout_anchor="@id/map_search_bar">
         <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->

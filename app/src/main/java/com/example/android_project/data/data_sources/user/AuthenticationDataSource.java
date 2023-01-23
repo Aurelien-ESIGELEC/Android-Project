@@ -63,7 +63,6 @@ public class AuthenticationDataSource {
 
     public MutableLiveData<Boolean> login(String email, String password) {
         MutableLiveData<Boolean> isLogged = new MutableLiveData<>();
-        Log.d(TAG, "login: " + (email != null && password != null && !email.isEmpty() && !password.isEmpty()));
         if (email != null && password != null && !email.isEmpty() && !password.isEmpty()){
 
             mAuth.signInWithEmailAndPassword(email, password)

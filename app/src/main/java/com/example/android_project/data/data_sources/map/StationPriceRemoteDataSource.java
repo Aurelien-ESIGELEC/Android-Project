@@ -69,6 +69,71 @@ public class StationPriceRemoteDataSource {
         return fuelMutableLiveData;
     }
 
+    public MutableLiveData<Fuel> addReview(Fuel fuel, String user, String newReview) {
+        MutableLiveData<Fuel> fuelMutableLiveData = new MutableLiveData<>();
+
+
+        final DocumentReference documentReference = db.collection("price_users")
+                .document(fuel.getId());
+
+        db.runTransaction(transaction -> {
+            DocumentSnapshot snapshot = transaction.get(documentReference);
+
+            HashMap<String, String> reviews = snapshot.get("reviews", HashMap.class);
+
+            Double reliabilityIndex = snapshot.getDouble("reliability_index");
+
+            if (reviews == null) {
+                reviews = new HashMap<>();
+            }
+
+
+            if (reviews.containsKey(user)) {
+                String oldReview = reviews.get(user);
+                if (!oldReview.equals(newReview)) {
+                    if (oldReview.equals("up")) {
+                        reliabilityIndex -= 0.02;
+                    }
+
+                    if (oldReview.equals("down")) {
+                        reliabilityIndex += 0.02;
+                    }
+                }
+            } else {
+                if (newReview.equals("up")) {
+                    reliabilityIndex += 0.01;
+                }
+
+                if (newReview.equals("down")) {
+                    reliabilityIndex -= 0.01;
+                }
+                reviews.put(user, newReview);
+            }
+
+            fuel.setReliabilityIndex(reliabilityIndex);
+            fuel.setCanUpdate(reliabilityIndex < 10 && reliabilityIndex > 0 &&
+                    !Objects.requireNonNull(user).isEmpty() &&
+                    !reviews.containsKey(user) &&
+                    !user.equals(snapshot.getString("user")));
+
+            transaction.update(documentReference, "reliability_index", reliabilityIndex);
+            transaction.update(documentReference, "reviews", reviews);
+
+            // Success
+            return fuel;
+
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                fuelMutableLiveData.setValue(fuel);
+            } else {
+                fuelMutableLiveData.setValue(null);
+            }
+        });
+
+        return fuelMutableLiveData;
+    }
+
+
     public MutableLiveData<List<Fuel>> getPricesOfStationsByFuel(String user, String stationId, String fuelType) {
         MutableLiveData<List<Fuel>> fuelMutableLiveData = new MutableLiveData<>();
 
@@ -84,39 +149,7 @@ public class StationPriceRemoteDataSource {
 
                             Map<String, Object> map = document.getData();
 
-                            double price = 0;
-                            String userAdded = "";
-                            double reliabilityIndex = 0d;
-                            Timestamp timestamp = null;
-
-                            if (map.containsKey("price")) {
-                                price = Double.parseDouble(map.get("price").toString());
-                            }
-
-                            if (map.containsKey("user")) {
-                                userAdded = (String) map.get("user");
-                            }
-
-                            if (map.containsKey("reliability_index")) {
-                                reliabilityIndex = Double.parseDouble(map.get("reliability_index").toString());
-                            }
-
-                            boolean canUpdate = reliabilityIndex < 10 && reliabilityIndex > 0 &&
-                                    !Objects.requireNonNull(user).isEmpty() &&
-                                    !user.equals(userAdded);
-
-
-                            if (map.containsKey("update_date")) {
-                                timestamp = (Timestamp) map.get("update_date");
-                            }
-
-
-                            Fuel fuel = new Fuel()
-                                    .setPrice(price)
-                                    .setName(fuelType)
-                                    .setCanUpdate(canUpdate)
-                                    .setReliabilityIndex(reliabilityIndex)
-                                    .setUpdateDateFromTimestamp(timestamp);
+                            Fuel fuel = getFuelFromMap(map, user);
                             fuelPrice.add(fuel);
                             Log.d(TAG, "getPricesOfStationsByFuel: " + fuel);
                         }
@@ -130,129 +163,43 @@ public class StationPriceRemoteDataSource {
         return fuelMutableLiveData;
     }
 
-//    public MutableLiveData<Boolean> isUsernameAlreadyInUse(String username) {
-//        MutableLiveData<Boolean> isUsernameAlreadyInUse = new MutableLiveData<>();
-//        db.collection("users")
-//                .whereEqualTo("username", username)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//
-//                    if (task.isSuccessful()) {
-//                        Log.d("isUsernameAlreadyUsed", "" + username + " : " + (task.getResult().size() != 0));
-//                        if (task.getResult().size() != 0) {
-//                            isUsernameAlreadyInUse.postValue(true);
-//                        } else {
-//                            isUsernameAlreadyInUse.postValue(false);
-//                        }
-//
-//                        errorCodeLiveData.postValue(null);
-//                    } else {
-//                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
-//                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                    }
-//                });
-//        return isUsernameAlreadyInUse;
-//    }
-//
-//    public MutableLiveData<Boolean> isEmailAlreadyInUse(String email) {
-//        MutableLiveData<Boolean> isEmailAlreadyInUse = new MutableLiveData<>();
-//        db.collection("users")
-//                .whereEqualTo("email", email)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//
-//                        Log.d("isEmailAlreadyUsed", email + " : " + (task.getResult().size() != 0));
-//                        if (task.getResult().size() != 0) {
-//                            isEmailAlreadyInUse.postValue(true);
-//                        } else {
-//                            isEmailAlreadyInUse.postValue(false);
-//                        }
-//                        errorCodeLiveData.postValue(null);
-//                    } else {
-//                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                    }
-//                });
-//        return isEmailAlreadyInUse;
-//    }
+    private Fuel getFuelFromMap(Map<String, Object> map, String user)  {
+        double price = 0;
+        String userAdded = "";
+        double reliabilityIndex = 0d;
+        Timestamp timestamp = null;
+        String fuelType = "";
 
-//    public MutableLiveData<Boolean> createUser(User user) {
-//        MutableLiveData<Boolean> isUserCreated = new MutableLiveData<>();
-//        db.collection("users")
-//                .add(user)
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        Log.v("Firestore", user.toString());
-//                        this.userMutableLiveData.setValue(user);
-//                        isUserCreated.setValue(true);
-//                        errorCodeLiveData.postValue(null);
-//                    } else {
-//                        isUserCreated.setValue(false);
-//                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
-//                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                    }
-//                });
-//        return isUserCreated;
-//    }
+        if (map.containsKey("price")) {
+            price = Double.parseDouble(map.get("price").toString());
+        }
 
-//    public MutableLiveData<Boolean> getUser(String email) {
-//        MutableLiveData<Boolean> isUserRetrieved = new MutableLiveData<>();
-//        db.collection("users")
-//                .whereEqualTo("email", email)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful() && task.getResult().size() == 1) {
-//                        User user = task.getResult().toObjects(User.class).get(0);
-//                        user.setId(task.getResult().getDocuments().get(0).getId());
-//                        Log.d(TAG, "getUser: " + user);
-//                        userMutableLiveData.setValue(user);
-//                        isUserRetrieved.setValue(true);
-//                        errorCodeLiveData.postValue(null);
-//                    } else {
-//                        isUserRetrieved.setValue(false);
-//                        errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
-//                        Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                    }
-//                });
-//        return isUserRetrieved;
-//    }
+        if (map.containsKey("fuel")) {
+            fuelType = (String) map.get("fuel");
+        }
 
-//    public MutableLiveData<Boolean> addFriendToUser(String username) {
-//        MutableLiveData<Boolean> isAdded = new MutableLiveData<>();
-//
-//        if (username != null && !username.isEmpty()) {
-//
-//            db.collection("users")
-//                    .whereEqualTo("username", username)
-//                    .get()
-//                    .addOnCompleteListener(task -> {
-//                        if (task.isSuccessful() && task.getResult().size() == 1) {
-//                            errorCodeLiveData.postValue(null);
-//
-//                            final DocumentReference sfDocRef = db.collection("users")
-//                                    .document(Objects.requireNonNull(userMutableLiveData.getValue()).getId());
-//
-//                            db.runTransaction((Transaction.Function<Void>) transaction -> {
-//                                        DocumentSnapshot snapshot = transaction.get(sfDocRef);
-//
-//                                        User[] users = snapshot.get("friends", User[].class);
-//                                        Log.d(TAG, "addFriendToUser: " + users);
-////                                        transaction.update(sfDocRef, "friends", newPopulation);
-//
-//                                        // Success
-//                                        return null;
-//                                    })
-//                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Transaction success!"))
-//                                    .addOnFailureListener(e -> Log.w(TAG, "Transaction failure.", e));
-//                        } else {
-//                            isAdded.setValue(false);
-//                            errorCodeLiveData.postValue("" + ((FirebaseFirestoreException) Objects.requireNonNull(task.getException())).getCode());
-//                            Log.e("Firestore err", "" + ((FirebaseFirestoreException) task.getException()).getCode());
-//                        }
-//                    });
-//        }
-//        return isAdded;
-//    }
+        if (map.containsKey("user")) {
+            userAdded = (String) map.get("user");
+        }
+
+        if (map.containsKey("reliability_index")) {
+            reliabilityIndex = Double.parseDouble(map.get("reliability_index").toString());
+        }
+
+        boolean canUpdate = reliabilityIndex < 10 && reliabilityIndex > 0 &&
+                !Objects.requireNonNull(user).isEmpty() &&
+                !user.equals(userAdded);
+
+        if (map.containsKey("update_date")) {
+            timestamp = (Timestamp) map.get("update_date");
+        }
+
+        return new Fuel()
+                .setPrice(price)
+                .setName(fuelType)
+                .setCanUpdate(canUpdate)
+                .setReliabilityIndex(reliabilityIndex)
+                .setUpdateDateFromTimestamp(timestamp);
+    }
 
 }
