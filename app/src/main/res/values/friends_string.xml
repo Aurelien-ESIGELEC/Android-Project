@@ -4,4 +4,6 @@
     <string name="friends_follower_title">Follower</string>
     <string name="friends_dialog_title">My Friends</string>
     <string name="friends_add_friend">Add a friend</string>
+    <string name="friends_username">Username</string>
+    <string name="friends_no_user">No user found</string>
 </resources>

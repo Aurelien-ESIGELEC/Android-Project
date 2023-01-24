@@ -100,7 +100,7 @@ public class RegisterFragment extends Fragment {
         Button btnRegister = requireView().findViewById(R.id.register_btn_login);
         btnRegister.setOnClickListener(this::onLoginClick);
 
-        Button btnNext = requireView().findViewById(R.id.register_btn_register);
+        Button btnNext = requireView().findViewById(R.id.settings_btn_update);
         btnNext.setOnClickListener(this::onNextClick);
 
         if (authViewModel.getEmail() != null ) {

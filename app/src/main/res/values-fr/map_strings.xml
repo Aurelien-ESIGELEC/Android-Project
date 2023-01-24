@@ -5,4 +5,6 @@
     <string name="map_show_list">Afficher la liste</string>
     <string name="map_hide_list">Cacher la liste</string>
     <string name="fuel_add_text">Ajouter un prix</string>
+    <string name="fuel_price">Prix</string>
+    <string name="fuel_price_no_value">Aucun prix inséré</string>
 </resources>

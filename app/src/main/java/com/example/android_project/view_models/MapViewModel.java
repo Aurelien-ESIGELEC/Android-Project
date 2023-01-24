@@ -13,6 +13,7 @@ import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.Fuel;
 import com.example.android_project.data.models.fuel_price.GasStation;
 import com.example.android_project.data.repositories.MapRepository;
+import com.example.android_project.utils.Utils;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -67,11 +68,41 @@ public class MapViewModel extends ViewModel {
         return search;
     }
 
-    public LiveData<List<Fuel>> getPricesOfStationsByFuel(String user, String stationId, String fuelType) {
+    /**
+     *
+     * @param user
+     * @param gasStation
+     * @param fuelType
+     * @return
+     */
+    public LiveData<List<Fuel>> getPricesOfStationsByFuel(String user, GasStation gasStation, String fuelType) {
         MediatorLiveData<List<Fuel>> listMediatorLiveData = new MediatorLiveData<>();
 
-        listMediatorLiveData.addSource(mapRepository.getPricesOfStationsByFuel(user ,stationId, fuelType), fuelList -> {
+        listMediatorLiveData.addSource(mapRepository.getPricesOfStationsByFuel(user ,gasStation.getId(), fuelType), fuelList -> {
             if (fuelList != null) {
+
+                for (Fuel fuel: fuelList) {
+                    if (fuel.canBeUpdated()) {
+                        if (this.userLocation.getValue() != null) {
+                            float distance = Utils.getDistanceBetweenTwoPoint(
+                                    userLocation.getValue().getLatitude(),
+                                    userLocation.getValue().getLongitude(),
+                                    gasStation.getLat(),
+                                    gasStation.getLon()
+                            );
+                            fuel.setCanUpdate(distance <= 200);
+                        }
+                    }
+
+                    if (gasStation.getFuelList().containsKey(fuelType) && gasStation.getFuelList().get(fuelType) != null) {
+                        if (gasStation.getFuelList().get(fuelType).contains(fuel)) {
+                            gasStation.getFuelList().get(fuelType).remove(fuel);
+                        }
+
+                        gasStation.getFuelList().get(fuelType).add(fuel);
+                    }
+                }
+
                 listMediatorLiveData.setValue(fuelList);
             }
         });
@@ -79,6 +110,11 @@ public class MapViewModel extends ViewModel {
         return listMediatorLiveData;
     }
 
+    /**
+     *
+     * @param gasStation
+     * @return
+     */
     public LiveData<Double> getDistanceBetweenLocationAndGasStation(GasStation gasStation) {
         Location sourceLocation = userLocation.getValue();
 
@@ -94,6 +130,13 @@ public class MapViewModel extends ViewModel {
         }
     }
 
+    /**
+     *
+     * @param lat
+     * @param lon
+     * @param dist
+     * @return
+     */
     public LiveData<List<GasStation>> updateListStationsByLocation(float lat, float lon, float dist) {
         MediatorLiveData<List<GasStation>> mediatorLiveData = new MediatorLiveData<>();
 
@@ -120,8 +163,39 @@ public class MapViewModel extends ViewModel {
         return mediatorLiveData;
     }
 
-    public MutableLiveData<Fuel> addPrice(String user, String fuelType, double price, String stationId) {
-        return mapRepository.addPrice(user, fuelType, price, stationId);
+    /**
+     *
+     * @param fuel
+     * @param user
+     * @param newReview
+     * @return
+     */
+    public LiveData<Fuel> updateReviewOnPrice(Fuel fuel, String user, String newReview) {
+        return this.mapRepository.updateReviewOnPrice(fuel,user, newReview);
+    }
+
+    /**
+     *
+     * @param user
+     * @param fuelType
+     * @param price
+     * @param gasStation
+     * @return
+     */
+    public LiveData<Fuel> addPrice(String user, String fuelType, double price, GasStation gasStation) {
+        MediatorLiveData<Fuel> fuelMediatorLiveData = new MediatorLiveData<>();
+
+        fuelMediatorLiveData.addSource(mapRepository.addPrice(user, fuelType, price, gasStation.getId()), fuel -> {
+
+
+            if (gasStation.getFuelList().containsKey(fuelType) && gasStation.getFuelList().get(fuelType) != null) {
+                gasStation.getFuelList().get(fuelType).add(fuel);
+            }
+
+            fuelMediatorLiveData.setValue(fuel);
+        });
+
+        return fuelMediatorLiveData;
     }
 
     public LiveData<Double> getAvgPriceInFrance(String fuelType) {

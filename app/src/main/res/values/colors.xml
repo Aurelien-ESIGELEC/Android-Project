@@ -7,5 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="selected_cursor">#c91032</color>
+    <color name="selected_cursor">#ffc91032</color>
+
+    <color name="main_500">#FF007FAC</color>
+    <color name="secondary_600">#FF4E616C</color>
+    <color name="main_dark_800">#FF003549</color>
+    <color name="secondary_dark_800">#FF20333D</color>
 </resources>

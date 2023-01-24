@@ -114,6 +114,14 @@ public class AuthViewModel extends ViewModel {
         this.username.setValue(fuel);
     }
 
+    public MutableLiveData<Boolean> addFriendToUser(String username) {
+        return this.userRepository.addFriendToUser(username);
+    }
+
+    public LiveData<List<String>> getFollowers() {
+        return this.userRepository.getFollowers();
+    }
+
     public void setCurrentSharing(String sharing) {
         Log.d(TAG, "setCurrentSharing: " + sharing);
         this.sharing.setValue(sharing);
@@ -228,6 +236,10 @@ public class AuthViewModel extends ViewModel {
         });
 
         return isLogged;
+    }
+
+    public LiveData<Boolean> updateUserPreferences() {
+        return this.userRepository.updateUserPreferences(notifications.getValue(),  fuelTypes.getValue(), sharing.getValue());
     }
 
     public LiveData<Boolean> canRegisterUser(String username, String email) {

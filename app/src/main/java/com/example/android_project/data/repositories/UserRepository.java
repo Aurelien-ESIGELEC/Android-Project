@@ -5,10 +5,14 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.android_project.data.models.user.User;
 import com.example.android_project.data.data_sources.user.AuthenticationDataSource;
 import com.example.android_project.data.data_sources.user.UserRemoteDataSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
 
@@ -51,7 +55,7 @@ public class UserRepository {
     }
 
     public void checkIfLoggedInCache() {
-        Log.d(TAG, "checkIfLoggedInCache: "+ authenticationDataSource.hasExistingUser());
+        Log.d(TAG, "checkIfLoggedInCache: " + authenticationDataSource.hasExistingUser());
         if (authenticationDataSource.hasExistingUser()) {
             this.authenticationDataSource.isLoggedLiveData().setValue(true);
         }
@@ -74,7 +78,7 @@ public class UserRepository {
                         }
                     }
             );
-        } else  {
+        } else {
             isLogged.setValue(false);
         }
 
@@ -93,13 +97,13 @@ public class UserRepository {
         isFullyLogged.addSource(
                 isLogged,
                 isRegisteredInAuth -> {
-                    Log.d(TAG, "login: "+ isFullyLogged);
+                    Log.d(TAG, "login: " + isFullyLogged);
                     if (isRegisteredInAuth) {
                         isFullyLogged.addSource(
                                 this.userRemoteDataSource.getUser(email),
                                 user -> {
                                     if (user != null) {
-                                        Log.v("UserRepository", "User getted : " + user );
+                                        Log.v("UserRepository", "User getted : " + user);
                                         isFullyLogged.setValue(true);
                                     } else {
                                         isFullyLogged.setValue(false);
@@ -113,17 +117,25 @@ public class UserRepository {
         );
 
 
-
         return isFullyLogged;
     }
 
-//    public MutableLiveData<Boolean> addFriendToUser(String username) {
-//        MediatorLiveData<Boolean> isAdded = new MediatorLiveData<>();
-//
-//        if (username != null && !username.isEmpty()) {
-//
-//        }
-//    }
+    public LiveData<List<String>> getFollowers() {
+        return Transformations.map(this.userRemoteDataSource.getFollowers(),users -> {
+            List<String> follower = new ArrayList<>();
+            if (users != null) {
+                for (User user: users) {
+                    follower.add(user.getUsername());
+                }
+            }
+
+            return follower;
+        });
+    }
+
+    public MutableLiveData<Boolean> addFriendToUser(String username) {
+        return this.userRemoteDataSource.addFriendToUser(username);
+    }
 
     public MutableLiveData<Boolean> anonymousLogin() {
         return this.authenticationDataSource.anonymousLogin();
@@ -148,6 +160,10 @@ public class UserRepository {
 
     public MutableLiveData<Boolean> isEmailAlreadyInUse(String email) {
         return this.userRemoteDataSource.isEmailAlreadyInUse(email);
+    }
+
+    public MutableLiveData<Boolean> updateUserPreferences(List<String> notifications, List<String> favoriteFuels, String sharing) {
+        return this.userRemoteDataSource.updateUserPreferences(notifications, favoriteFuels, sharing);
     }
 
 //    private MutableLiveData<User> getLoggedUserData(String email) {

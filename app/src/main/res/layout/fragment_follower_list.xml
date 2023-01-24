@@ -5,4 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".views.pages.FollowerListFragment">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/friends_follower_progress_indicator"
+        android:layout_gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friends_rv_follower"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </FrameLayout>

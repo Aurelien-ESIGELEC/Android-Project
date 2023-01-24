@@ -1,23 +1,15 @@
 package com.example.android_project.views.components;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.text.Editable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.fuel_price.GasStation;
@@ -33,26 +25,18 @@ import java.util.Objects;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddFuelDialogFragment extends DialogFragment {
+public class AddFriendDialogFragment extends DialogFragment {
 
-    private MapViewModel mapViewModel;
     private AuthViewModel authViewModel;
+    private TextInputLayout tvUsernameEmail;
 
-    private GasStation gasStation;
-    private String fuelType;
-
-    private TextInputLayout tvPrice;
-
-    public AddFuelDialogFragment(GasStation gasStation, String fuelType) {
-        this.gasStation = gasStation;
-        this.fuelType = fuelType;
+    public AddFriendDialogFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
     }
 
@@ -63,11 +47,11 @@ public class AddFuelDialogFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        View dialogView = inflater.inflate(R.layout.fragment_add_fuel_dialog, null);
+        View dialogView = inflater.inflate(R.layout.fragment_add_friend_dialog, null);
 
-        tvPrice = dialogView.findViewById(R.id.station_tf_add_price);
+        tvUsernameEmail = dialogView.findViewById(R.id.friends_tf_username_or_email);
 
-        tvPrice.getEditText().addTextChangedListener(new CustomTextWatcher() {
+        tvUsernameEmail.getEditText().addTextChangedListener(new CustomTextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 super.onTextChanged(charSequence, i, i1, i2);
@@ -77,30 +61,19 @@ public class AddFuelDialogFragment extends DialogFragment {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                 } else {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    tvPrice.setError(getString(R.string.fuel_price_no_value));
+                    tvUsernameEmail.setError(getString(R.string.friends_no_user));
                 }
             }
             //
         });
 
-        builder.setView(dialogView)
-                .setTitle(getString(R.string.fuel_add_text))
-                .setPositiveButton(R.string.app_add, (dialog, id) -> {
-                    User user = authViewModel.getUser().getValue();
-                    if (user != null && tvPrice.getEditText() != null && !tvPrice.getEditText().getText().toString().isEmpty()) {
-
-                        mapViewModel.addPrice(
-                                user.getUsername(),
-                                fuelType,
-                                Double.parseDouble(String.valueOf(tvPrice.getEditText().getText())),
-                                gasStation
-                        ).observe(this, fuel -> mapViewModel.setSelectedStation(gasStation));
-                        this.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.app_cancel, (dialog, id) ->
-                        Objects.requireNonNull(AddFuelDialogFragment.this.getDialog()).cancel()
-                );
+        builder.setView(dialogView).setTitle(getString(R.string.friends_add_friend)).setPositiveButton(R.string.app_add, (dialog, id) -> {
+            User user = authViewModel.getUser().getValue();
+            if (user != null && tvUsernameEmail.getEditText() != null && !tvUsernameEmail.getEditText().getText().toString().isEmpty()) {
+                authViewModel.addFriendToUser(String.valueOf(tvUsernameEmail.getEditText().getText())).observe(this, aBoolean -> {});
+                this.dismiss();
+            }
+        }).setNegativeButton(R.string.app_cancel, (dialog, id) -> Objects.requireNonNull(AddFriendDialogFragment.this.getDialog()).cancel());
 
         return builder.create();
     }

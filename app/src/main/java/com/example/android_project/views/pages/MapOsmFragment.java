@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import com.example.android_project.R;
 import com.example.android_project.data.models.address.SearchAddress;
 import com.example.android_project.data.models.fuel_price.GasStation;
+import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
 import com.example.android_project.view_models.MapViewModel;
 import com.example.android_project.views.adapters.SearchAddressListAdapter;
@@ -173,6 +174,18 @@ public class MapOsmFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (authViewModel.isLogged().getValue() == null || authViewModel.isLogged().getValue() != null && Boolean.FALSE.equals(authViewModel.isLogged().getValue())) {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(
+                    R.id.authNavigation/*,
+                        null,
+                        new NavOptions.Builder()
+                                .setEnterAnim(android.R.anim.slide_in_left)
+                                .setExitAnim(android.R.anim.slide_out_right)
+                                .build()
+                */);
+        }
 
         // Redirect to LoginPage when not logged
         authViewModel.isLogged().observe(getViewLifecycleOwner(), isLogged -> {
@@ -396,24 +409,24 @@ public class MapOsmFragment extends Fragment {
     }
 
     private void getGasStationOnScreen(double zoomLevel) {
-        Log.d(TAG, "getGasStationOnScreen: " +zoomLevel);
+        Log.d(TAG, "getGasStationOnScreen: " + zoomLevel);
         if (zoomLevel >= 11) {
             progressIndicator.setVisibility(View.VISIBLE);
             BoundingBox box = mapView.getProjection().getBoundingBox();
-            float[] dist = new float[1];
-            Location.distanceBetween(
+
+            float distance = Utils.getDistanceBetweenTwoPoint(
                     mapView.getProjection().getNorthEast().getLatitude(),
                     mapView.getProjection().getNorthEast().getLongitude(),
                     mapView.getProjection().getSouthWest().getLatitude(),
-                    mapView.getProjection().getSouthWest().getLongitude(),
-                    dist
+                    mapView.getProjection().getSouthWest().getLongitude()
             );
 
             mapViewModel.updateListStationsByLocation(
                     (float) box.getCenterLatitude(),
                     (float) box.getCenterLongitude(),
-                    dist[0]/2
-            ).observe(getViewLifecycleOwner(), gasStations -> {});
+                    distance / 2
+            ).observe(getViewLifecycleOwner(), gasStations -> {
+            });
         }
 
 
@@ -426,13 +439,7 @@ public class MapOsmFragment extends Fragment {
             if (userMarker == null) {
                 userMarker = new Marker(mapView);
 
-                userMarker.setIcon(
-                        createCustomIcon(
-                                requireContext(),
-                                R.drawable.person_pin_circle,
-                                R.color.main_dark_800
-                        )
-                );
+                userMarker.setIcon(createCustomIcon(requireContext(), R.drawable.person_pin_circle, R.color.main_dark_800));
 
                 userMarker.setOnMarkerClickListener((marker, mapView1) -> true);
 
@@ -456,7 +463,7 @@ public class MapOsmFragment extends Fragment {
 
                 marker.setOnMarkerClickListener((marker1, mapView1) -> {
 
-                    for (Marker marker2: radiusMarkerClusterer.getItems()) {
+                    for (Marker marker2 : radiusMarkerClusterer.getItems()) {
                         marker2.setIcon(createCustomIcon(requireContext(), R.drawable.local_gas_station, R.color.secondary_dark_800));
                     }
 
@@ -501,7 +508,8 @@ public class MapOsmFragment extends Fragment {
     private void zoomOnSearchedLocation(SearchAddress address) {
         if (address != null) {
             GeoPoint markerPoint = new GeoPoint(address.getLat(), address.getLon());
-            mapViewModel.setZoomOnPoint(markerPoint);
+            IMapController mapController = mapView.getController();
+            mapController.animateTo(markerPoint, 15.0, 100L);
         }
     }
 

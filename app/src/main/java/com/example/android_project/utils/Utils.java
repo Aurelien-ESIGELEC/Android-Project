@@ -3,6 +3,7 @@ package com.example.android_project.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,14 +27,7 @@ public class Utils {
     }
 
     public static Snackbar createSnackbarNoNetwork(View view, View.OnClickListener listener) {
-        return Snackbar.make(
-                view,
-                R.string.app_error_no_network,
-                Snackbar.LENGTH_LONG
-        ).setAction(
-                R.string.app_retry_action,
-                listener
-        );
+        return Snackbar.make(view, R.string.app_error_no_network, Snackbar.LENGTH_LONG).setAction(R.string.app_retry_action, listener);
     }
 
     public static Drawable createCustomIcon(Context context, int drawable, int color) {
@@ -42,6 +36,12 @@ public class Utils {
         DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, color));
 
         return wrappedDrawable;
+    }
+
+    public static float getDistanceBetweenTwoPoint(double sourceLat, double sourceLon, double destLat, double destLon) {
+        float[] distance = new float[1];
+        Location.distanceBetween(sourceLat, sourceLon, destLat, destLon, distance);
+        return distance[0];
     }
 
     public static boolean isFieldEmpty(Context context, TextInputLayout et) {

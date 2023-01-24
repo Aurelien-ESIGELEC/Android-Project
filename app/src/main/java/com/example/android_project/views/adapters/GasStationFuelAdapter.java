@@ -9,11 +9,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_project.R;
 import com.example.android_project.data.models.fuel_price.Fuel;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -26,6 +26,8 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
 
     private boolean isUpToggled;
     private boolean isDownToggled;
+
+    private OnReviewListener onReviewListener;
 
     public GasStationFuelAdapter() {
         super();
@@ -44,6 +46,12 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         this.fuelList = fuelList;
     }
 
+    public GasStationFuelAdapter(List<Fuel> fuelList, OnReviewListener onReviewListener) {
+        this();
+        this.fuelList = fuelList;
+        this.onReviewListener = onReviewListener;
+    }
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
@@ -51,18 +59,23 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvDate;
         private final TextView tvPrice;
+        private final TextView tvIv;
 
         private final ImageButton ibtnUp;
         private final ImageButton ibtnDown;
+
+        private final CircularProgressIndicator progressIndicator;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
 
-            tvDate = view.findViewById(R.id.station_fuel_tv_date);
+            tvDate = view.findViewById(R.id.station_fuel_tv_update_date);
             tvPrice = view.findViewById(R.id.station_fuel_tv_price);
+            tvIv = view.findViewById(R.id.station_fuel_tv_ri);
             ibtnUp = view.findViewById(R.id.station_fuel_ibtn_up);
             ibtnDown = view.findViewById(R.id.station_fuel_ibtn_down);
+            progressIndicator = view.findViewById(R.id.station_fuel_progress_indicator);
         }
 
         public ImageButton getIbtnUp() {
@@ -80,7 +93,13 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         public TextView getTvPrice() {
             return tvPrice;
         }
+        public TextView getTvIv() {
+            return tvIv;
+        }
 
+        public CircularProgressIndicator getProgressIndicator() {
+            return progressIndicator;
+        }
     }
 
     // Create new views (invoked by the layout manager)
@@ -112,27 +131,53 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
 
         viewHolder.getTvDate().setText(context.getString(R.string.fuel_date_eu, calendar));
         viewHolder.getTvPrice().setText(context.getString(R.string.fuel_price_euro, fuel.getPrice()));
+        viewHolder.getTvIv().setText(context.getString(R.string.fuel_price_iv, fuel.getReliabilityIndex()));
+
+        Log.d(TAG, "onBindViewHolder: " + fuel.getReliabilityIndex());
+
+        viewHolder.getProgressIndicator().setVisibility(View.GONE);
 
         if (!fuel.canBeUpdated()) {
             viewHolder.getIbtnUp().setEnabled(false);
             viewHolder.getIbtnDown().setEnabled(false);
         }
 
+        if (fuel.getMyReview().equals("up")) {
+            isUpToggled = true;
+            updateUpButtonIcon(viewHolder.getIbtnUp());
+        }
+
+        if (fuel.getMyReview().equals("down")) {
+            isDownToggled = true;
+            updateDownButtonIcon(viewHolder.getIbtnDown());
+        }
+
         viewHolder.getIbtnUp().setOnClickListener(v -> {
+            if (isDownToggled) {
+                isDownToggled = false;
+                updateDownButtonIcon(viewHolder.getIbtnDown());
+            }
+
             isUpToggled = !isUpToggled;
-            if (isUpToggled) {
-                viewHolder.getIbtnUp().setImageResource( R.drawable.thumb_up);
-            } else {
-                viewHolder.getIbtnUp().setImageResource(R.drawable.thumb_up_off);
+            updateUpButtonIcon(viewHolder.getIbtnUp());
+
+            if (onReviewListener != null) {
+                onReviewListener.onUpToggled(viewHolder, fuel, isUpToggled);
             }
         });
 
         viewHolder.getIbtnDown().setOnClickListener(v -> {
+
+            if (isUpToggled) {
+                isUpToggled = false;
+                updateUpButtonIcon(viewHolder.getIbtnUp());
+            }
+
             isDownToggled = !isDownToggled;
-            if (isDownToggled) {
-                viewHolder.getIbtnDown().setImageResource(R.drawable.thumb_down);
-            } else {
-                viewHolder.getIbtnDown().setImageResource(R.drawable.thumb_down_off);
+            updateDownButtonIcon(viewHolder.getIbtnDown());
+
+            if (onReviewListener != null) {
+                onReviewListener.onDownToggled(viewHolder, fuel, isDownToggled);
             }
         });
 
@@ -149,10 +194,31 @@ public class GasStationFuelAdapter extends RecyclerView.Adapter<GasStationFuelAd
         this.notifyItemRangeChanged(size, fuelList.size());
     }
 
+    private void updateUpButtonIcon(ImageButton imageButton) {
+        if (isUpToggled) {
+            imageButton.setImageResource(R.drawable.thumb_up);
+        } else {
+            imageButton.setImageResource(R.drawable.thumb_up_off);
+        }
+    }
+
+    private void updateDownButtonIcon(ImageButton imageButton) {
+        if (isDownToggled) {
+            imageButton.setImageResource(R.drawable.thumb_down);
+        } else {
+            imageButton.setImageResource(R.drawable.thumb_down_off);
+        }
+    }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return fuelList != null ? fuelList.size() : 0;
+    }
+
+    public interface OnReviewListener{
+        void onUpToggled(ViewHolder view, Fuel fuel, boolean isToggled);
+        void onDownToggled(ViewHolder view, Fuel fuel, boolean isToggled);
     }
 
 }

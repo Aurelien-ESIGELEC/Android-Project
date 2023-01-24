@@ -7,14 +7,14 @@
 
     <TextView
 
-        android:id="@+id/station_fuel_tv_date"
+        android:id="@+id/station_fuel_tv_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/string_base"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
     <TextView
-        android:id="@+id/station_fuel_tv_price"
+        android:id="@+id/station_fuel_tv_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/station_city"

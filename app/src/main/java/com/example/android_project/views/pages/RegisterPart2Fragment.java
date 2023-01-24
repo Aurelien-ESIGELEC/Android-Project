@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,19 +15,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Switch;
 
 import com.example.android_project.R;
-import com.example.android_project.utils.CustomTextWatcher;
 import com.example.android_project.utils.Utils;
 import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,7 +84,7 @@ public class RegisterPart2Fragment extends Fragment {
         lpiProgressRegister = requireView().findViewById(R.id.register2_progress_indicator);
         lpiProgressRegister.setVisibility(View.INVISIBLE);
 
-        Button btnRegister = requireView().findViewById(R.id.register_btn_register);
+        Button btnRegister = requireView().findViewById(R.id.settings_btn_update);
         btnRegister.setOnClickListener(this::onRegisterClick);
 
         rgSharing.setOnCheckedChangeListener( (radioGroup, radioButtonId) -> {

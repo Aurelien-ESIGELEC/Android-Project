@@ -28,10 +28,7 @@ public class NominatimDataSource {
     private final ExecutorService executorService;
 
     public NominatimDataSource() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://nominatim.openstreetmap.org")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://nominatim.openstreetmap.org").addConverterFactory(GsonConverterFactory.create()).build();
 
         this.nominatimService = retrofit.create(NominatimService.class);
         this.executorService = Executors.newFixedThreadPool(1);
@@ -39,97 +36,72 @@ public class NominatimDataSource {
     }
 
     /**
-     *
      * @param search
      */
     public void getAddressBySearch(String search) {
 
-        executorService.execute(() ->
-                nominatimService
-                        .getAddressBySearch(search)
-                        .enqueue(
-                                new Callback<List<NominatimSearch>>() {
-                                    @Override
-                                    public void onResponse(
-                                            @NonNull Call<List<NominatimSearch>> call,
-                                            @NonNull Response<List<NominatimSearch>> response
-                                    ) {
-                                        Log.d(TAG, "onResponse: " + response);
-                                        if (response.isSuccessful()) {
-                                            nominatimAddressLiveData.setValue(response.body());
-                                        }
-                                    }
+        executorService.execute(() -> nominatimService.getAddressBySearch(search).enqueue(new Callback<List<NominatimSearch>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<NominatimSearch>> call, @NonNull Response<List<NominatimSearch>> response) {
+                Log.d(TAG, "onResponse: " + response);
+                if (response.isSuccessful()) {
+                    nominatimAddressLiveData.setValue(response.body());
+                }
+            }
 
-                                    @Override
-                                    public void onFailure(
-                                            @NonNull Call<List<NominatimSearch>> call,
-                                            @NonNull Throwable t
-                                    ) {
-                                        nominatimAddressLiveData.setValue(null);
-                                    }
-                                }
-                        )
-        );
+            @Override
+            public void onFailure(@NonNull Call<List<NominatimSearch>> call, @NonNull Throwable t) {
+                nominatimAddressLiveData.setValue(null);
+            }
+        }));
     }
 
     /**
-     *
      * @param lat
      * @param lon
      * @return
      */
     public LiveData<NominatimReverse> getCountyByReverse(String lat, String lon) {
         MutableLiveData<NominatimReverse> nominatimReverseMutableLiveData = new MutableLiveData<>();
-        executorService.execute(() ->
-                nominatimService
-                        .getCountyByReverse(lat, lon)
-                        .enqueue(new Callback<NominatimReverse>() {
-                                     @Override
-                                     public void onResponse(@NonNull Call<NominatimReverse> call, @NonNull Response<NominatimReverse> response) {
-                                         Log.d(TAG, "onResponse: " + response);
-                                         if (response.isSuccessful()) {
-                                             nominatimReverseMutableLiveData.setValue(response.body());
-                                         }
-                                     }
+        executorService.execute(() -> nominatimService.getCountyByReverse(lat, lon).enqueue(new Callback<NominatimReverse>() {
+            @Override
+            public void onResponse(@NonNull Call<NominatimReverse> call, @NonNull Response<NominatimReverse> response) {
+                Log.d(TAG, "onResponse: " + response);
+                if (response.isSuccessful()) {
+                    nominatimReverseMutableLiveData.setValue(response.body());
+                }
+            }
 
-                                     @Override
-                                     public void onFailure(@NonNull Call<NominatimReverse> call, @NonNull Throwable t) {
-                                         nominatimReverseMutableLiveData.setValue(null);
-                                     }
-                                 }
-                        )
-        );
+            @Override
+            public void onFailure(@NonNull Call<NominatimReverse> call, @NonNull Throwable t) {
+                nominatimReverseMutableLiveData.setValue(null);
+            }
+        }));
 
         return nominatimReverseMutableLiveData;
     }
 
     /**
-     *
      * @param lat
      * @param lon
      * @return
      */
     public LiveData<NominatimReverse> getCityByReverse(String lat, String lon) {
         MutableLiveData<NominatimReverse> nominatimReverseMutableLiveData = new MutableLiveData<>();
-        executorService.execute(() ->
-                nominatimService
-                        .getCityByReverse(lat, lon)
-                        .enqueue(new Callback<NominatimReverse>() {
-                                     @Override
-                                     public void onResponse(@NonNull Call<NominatimReverse> call, @NonNull Response<NominatimReverse> response) {
-                                         Log.d(TAG, "onResponse: " + response);
-                                         if (response.isSuccessful()) {
-                                             nominatimReverseMutableLiveData.setValue(response.body());
-                                         }
-                                     }
+        executorService.execute(() -> nominatimService.getCityByReverse(lat, lon).enqueue(new Callback<NominatimReverse>() {
+            @Override
+            public void onResponse(@NonNull Call<NominatimReverse> call, @NonNull Response<NominatimReverse> response) {
+                Log.d(TAG, "onResponse: " + response);
+                if (response.isSuccessful()) {
+                    nominatimReverseMutableLiveData.setValue(response.body());
+                }
+            }
 
-                                     @Override
-                                     public void onFailure(@NonNull Call<NominatimReverse> call, @NonNull Throwable t) {
-                                         nominatimReverseMutableLiveData.setValue(null);
-                                     }
-                                 }
-                        )
-        );
+            @Override
+            public void onFailure(@NonNull Call<NominatimReverse> call, @NonNull Throwable t) {
+                nominatimReverseMutableLiveData.setValue(null);
+            }
+        }));
 
         return nominatimReverseMutableLiveData;
     }

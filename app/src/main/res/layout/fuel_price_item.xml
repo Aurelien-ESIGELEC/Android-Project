@@ -6,8 +6,7 @@
     android:orientation="horizontal">
 
     <TextView
-
-        android:id="@+id/station_fuel_tv_date"
+        android:id="@+id/station_fuel_tv_update_date"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -20,28 +19,60 @@
         android:id="@+id/station_fuel_tv_price"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/fuel_price_euro"
         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-    <ImageButton
-        android:id="@+id/station_fuel_ibtn_up"
-        style="@style/Widget.Material3.Button.IconButton"
+    <TextView
+        android:id="@+id/station_fuel_tv_ri"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_weight="0.5"
-        app:srcCompat="@drawable/thumb_up_off" />
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/fuel_price_iv"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-    <ImageButton
-        android:id="@+id/station_fuel_ibtn_down"
-        style="@style/Widget.Material3.Button.IconButton"
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:layout_weight="0.5"
-        app:srcCompat="@drawable/thumb_down_off" />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/station_fuel_progress_indicator"
+            style="@style/Widget.Material3.CircularProgressIndicator.Small"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/station_fuel_ibtn_up"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/thumb_up_off" />
+
+            <ImageButton
+                android:id="@+id/station_fuel_ibtn_down"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/thumb_down_off" />
+        </LinearLayout>
+    </FrameLayout>
+
 
 </LinearLayout>

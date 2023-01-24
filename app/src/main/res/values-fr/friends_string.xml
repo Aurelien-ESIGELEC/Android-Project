@@ -4,4 +4,6 @@
     <string name="friends_follower_title">Abonnés</string>
     <string name="friends_dialog_title">Mes Amis</string>
     <string name="friends_add_friend">Ajouter un amis</string>
+    <string name="friends_username">Nom d\'utilisateur</string>
+    <string name="friends_no_user">Aucun utilisateur trouvé</string>
 </resources>

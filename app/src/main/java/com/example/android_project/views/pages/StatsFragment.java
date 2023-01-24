@@ -36,8 +36,6 @@ public class StatsFragment extends DialogFragment {
     private MapViewModel mapViewModel;
     private AuthViewModel authViewModel;
 
-    private List<String> fuelTypeArray;
-
     private boolean hasCounty;
 
     private String county;
@@ -56,7 +54,7 @@ public class StatsFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogFullScreenStyle);
 
         mapViewModel = new ViewModelProvider(requireActivity()).get(MapViewModel.class);
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
@@ -93,6 +91,8 @@ public class StatsFragment extends DialogFragment {
 
         TextView tvCountyTitle = requireView().findViewById(R.id.stats_tv_price_county_title);
         TextView tvCityTitle = requireView().findViewById(R.id.stats_tv_price_city_title);
+        tvCountyTitle.setText(getString(R.string.stats_avg_county, "?"));
+        tvCityTitle.setText(getString(R.string.stats_avg_city, "?"));
 
         mapViewModel.getCountyByReverse().observe(getViewLifecycleOwner(), county -> {
             this.hasCounty = true;
@@ -114,8 +114,9 @@ public class StatsFragment extends DialogFragment {
 
         ChipGroup cgFuelType = requireView().findViewById(R.id.stats_chip_group);
 
+        List<String> fuelTypeArray;
         if (user != null) {
-            fuelTypeArray = user.getFuelTypes();
+            fuelTypeArray = user.getFavoriteFuels();
         } else {
             fuelTypeArray = Arrays.asList(getResources().getStringArray(R.array.app_fuel_type));
         }
@@ -194,10 +195,6 @@ public class StatsFragment extends DialogFragment {
             }, 250);
 
         }, 250);
-    }
-
-    private void initFuelPrice(TextView textView) {
-        textView.setText(getString(R.string.fuel_price_euro, 0f));
     }
 
     private void onBackArrowClick(View view) {

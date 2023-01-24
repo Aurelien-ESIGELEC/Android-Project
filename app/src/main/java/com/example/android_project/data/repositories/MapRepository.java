@@ -2,7 +2,6 @@ package com.example.android_project.data.repositories;
 
 import android.util.Log;
 
-import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -44,6 +43,10 @@ public class MapRepository {
         this.fuelPriceDataSource = new FuelPriceDataSource();
         this.matrixDataSource = new MatrixDataSource();
         this.stationPriceRemoteDataSource = new StationPriceRemoteDataSource();
+    }
+
+    public MutableLiveData<Fuel> updateReviewOnPrice(Fuel fuel, String user, String newReview) {
+        return this.stationPriceRemoteDataSource.updateReviewOnPrice(fuel, user, newReview);
     }
 
     /**
@@ -141,7 +144,15 @@ public class MapRepository {
                 String city = "";
 
                 if (input.getAddress() != null) {
-                    city = input.getAddress().getCity();
+
+                    if (input.getAddress().getCity() != null) {
+                        city = input.getAddress().getCity();
+                    } else if (input.getAddress().getTown() != null) {
+                            city = input.getAddress().getTown();
+                    } else if (input.getAddress().getVillage() != null) {
+                        city = input.getAddress().getVillage();
+                    }
+
                 }
 
                 return city;
@@ -219,6 +230,7 @@ public class MapRepository {
                         .setPrice(fields.getPrixValeur())
                         .setName(fields.getPrixNom())
                         .setCanUpdate(false)
+                        .setReliabilityIndex(100)
                         .setUpdateDate(LocalDateTime.parse(
                                 fields.getPrixMaj(),
                                 DateTimeFormatter.ISO_DATE_TIME

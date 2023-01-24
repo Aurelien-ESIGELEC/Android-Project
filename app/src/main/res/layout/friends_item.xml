@@ -8,16 +8,10 @@
         android:id="@+id/list_tv_friend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-    <TextView
-        android:id="@+id/list_tv_city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:paddingBottom="8dp"
-        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
     <com.google.android.material.divider.MaterialDivider
 
         android:layout_width="match_parent"

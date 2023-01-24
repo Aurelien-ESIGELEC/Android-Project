@@ -1,9 +1,15 @@
 package com.example.android_project.data.models.fuel_price;
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.PropertyName;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 
 public class Fuel {
     private String id;
@@ -113,6 +119,16 @@ public class Fuel {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof Fuel && Objects.equals(this.getId(), ((Fuel) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, name, updateDate, reliabilityIndex, canUpdate, myReview);
     }
 
     @Override

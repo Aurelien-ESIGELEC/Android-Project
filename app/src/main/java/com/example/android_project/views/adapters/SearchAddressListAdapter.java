@@ -45,7 +45,7 @@ public class SearchAddressListAdapter extends RecyclerView.Adapter<SearchAddress
             super(view);
             // Define click listener for the ViewHolder's View
 
-            tvAddress = view.findViewById(R.id.list_tv_address);
+            tvAddress = view.findViewById(R.id.list_tv_friend);
             tvCity = view.findViewById(R.id.list_tv_city);
         }
 

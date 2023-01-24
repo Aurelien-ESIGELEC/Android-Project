@@ -51,19 +51,6 @@ public class FuelPriceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        BottomSheetDialog dialog = (BottomSheetDialog) requireDialog();
-//        FrameLayout bottomSheet = (FrameLayout) dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-//        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
-
-//        // Set the bottom sheet fragment to its full height
-//        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-//            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//        });
-//
-//        behavior.setDraggable(true);
-//        behavior.setHideable(false);
-//        setCancelable(false);
-
         GasStation gasStation = mapViewModel.getSelectedStation().getValue();
 
         TextView tvAddress = requireView().findViewById(R.id.station_tv_address);
@@ -79,15 +66,9 @@ public class FuelPriceListFragment extends Fragment {
                 tvKm.setText(getString(R.string.map_kilometer, aDouble.floatValue()));
             });
 
-//            if (distance != null) {
-//                viewHolder.getTvDistance().setText(context.getString(R.string.map_kilometer, distance));
-//            }
 
             TabLayout tabLayout = requireView().findViewById(R.id.station_tabs_fuels);
-//            ViewPager2 viewPager2 = requireView().findViewById(R.id.station_view_pager);
             RecyclerView recyclerView = requireView().findViewById(R.id.station_rv_fuel_list);
-
-//            viewPager2.setAdapter(recyclerView.getAdapter());
 
             for (String fuel: gasStation.getFuelList().keySet()) {
                 TabLayout.Tab tab = tabLayout.newTab();
@@ -101,9 +82,6 @@ public class FuelPriceListFragment extends Fragment {
 
                     List<Fuel> fuelList = gasStation.getFuelList().get(Objects.requireNonNull(tab.getText()).toString());
                     ((GasStationFuelAdapter) Objects.requireNonNull(recyclerView.getAdapter())).setFuelList(fuelList);
-
-                    Log.d(TAG, "onTabSelected: " + recyclerView.getAdapter().getItemCount());
-
 
                     recyclerView.getAdapter().notifyDataSetChanged();
                     recyclerView.invalidate();

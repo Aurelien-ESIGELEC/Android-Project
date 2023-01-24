@@ -1,6 +1,7 @@
 package com.example.android_project.views.pages;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.android_project.data.models.user.User;
 import com.example.android_project.view_models.AuthViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -28,13 +30,14 @@ import com.google.android.material.shape.MaterialShapeDrawable;
  */
 public class SettingsFragment extends DialogFragment {
 
+    private static final String TAG = "SettingsFragment";
     private AuthViewModel authViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogFullScreenStyle);
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
     }
@@ -60,6 +63,8 @@ public class SettingsFragment extends DialogFragment {
 
         User user = authViewModel.getUser().getValue();
 
+        Log.d(TAG, "onViewCreated: "+ user);
+
         AppBarLayout appBarLayout = requireView().findViewById(R.id.settings_app_bar_layout);
         MaterialToolbar topAppBar = requireView().findViewById(R.id.settings_top_app_bar);
 
@@ -78,6 +83,18 @@ public class SettingsFragment extends DialogFragment {
         RadioButton rbPublic = requireView().findViewById(R.id.settings_rb_public);
         RadioButton rbFriends = requireView().findViewById(R.id.settings_rb_friends);
         RadioButton rbPrivate = requireView().findViewById(R.id.settings_rb_private);
+
+        LinearProgressIndicator progressIndicator = requireView().findViewById(R.id.settings_progress_indicator);
+        progressIndicator.setVisibility(View.INVISIBLE);
+
+        MaterialButton button = requireView().findViewById(R.id.settings_btn_update);
+
+        button.setOnClickListener(view1 -> {
+            progressIndicator.setVisibility(View.VISIBLE);
+            this.authViewModel.updateUserPreferences().observe(getViewLifecycleOwner(), aBoolean -> {
+                progressIndicator.setVisibility(View.INVISIBLE);
+            });
+        });
         
         if (user != null && user.getSharing() != null) {
             switch (user.getSharing()) {
@@ -106,7 +123,7 @@ public class SettingsFragment extends DialogFragment {
                     authViewModel.removeFuelType(fuelType);
                 }
             });
-            if (user != null && user.getFuelTypes() != null && user.getFuelTypes().contains(fuelType)) {
+            if (user != null && user.getFavoriteFuels() != null && user.getFavoriteFuels().contains(fuelType)) {
                 chip.setChecked(true);
             }
             cgFuelType.addView(chip);
@@ -114,6 +131,8 @@ public class SettingsFragment extends DialogFragment {
 
         LinearProgressIndicator lpiProgressRegister = requireView().findViewById(R.id.settings_progress_indicator);
         lpiProgressRegister.setVisibility(View.INVISIBLE);
+
+        authViewModel.setCurrentSharing((String) ((RadioButton) rgSharing.findViewById(rgSharing.getCheckedRadioButtonId())).getTag());
 
         rgSharing.setOnCheckedChangeListener( (radioGroup, radioButtonId) -> {
 
@@ -124,10 +143,8 @@ public class SettingsFragment extends DialogFragment {
             boolean isChecked = checkedRadioButton.isChecked();
 
             // If the radiobutton that has changed in check state is now checked...
-            if (isChecked)
-            {
-                // Changes the textview's text to "Checked: example radiobutton text"
-                authViewModel.setCurrentSharing((String) checkedRadioButton.getText());
+            if (isChecked) {
+                authViewModel.setCurrentSharing((String) checkedRadioButton.getTag());
             }
         });
 

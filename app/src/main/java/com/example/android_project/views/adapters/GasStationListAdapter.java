@@ -47,8 +47,8 @@ public class GasStationListAdapter extends RecyclerView.Adapter<GasStationListAd
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-            tvAddress = view.findViewById(R.id.station_fuel_tv_date);
-            tvCity = view.findViewById(R.id.station_fuel_tv_price);
+            tvAddress = view.findViewById(R.id.station_fuel_tv_address);
+            tvCity = view.findViewById(R.id.station_fuel_tv_city);
         }
 
         public ViewHolder(View view, OnItemListener onItemListener) {

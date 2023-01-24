@@ -7,17 +7,16 @@
     android:orientation="vertical"
     tools:context=".views.components.AddFuelDialogFragment">
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/station_tf_add_price"
+        android:id="@+id/friends_tf_username_or_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="5dp"
-        android:hint="@string/fuel_price">
+        android:hint="@string/friends_username">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
             />
 
     </com.google.android.material.textfield.TextInputLayout>

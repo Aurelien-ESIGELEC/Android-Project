@@ -28,7 +28,7 @@ public class MyFriendsFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_NoActionBar);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogFullScreenStyle);
     }
 
     private void onBackArrowClick(View view) {

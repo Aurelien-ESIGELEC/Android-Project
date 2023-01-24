@@ -5,30 +5,30 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
+import com.google.firebase.firestore.PropertyName;
+
 import java.util.List;
 
 public class User implements Parcelable {
 
-    private String id;
     private String username;
     private String email;
     private List<String> notifications;
     private String sharing;
-    private List<User> friends;
-    private List<String> fuelTypes;
+    private List<String> friends;
+    @PropertyName("favorite_fuels")
+    private List<String> favoriteFuels;
 
-    public User(String username, String email, List<String> notifications, String sharing, List<String> fuelTypes) {
-        this.id = id;
+    public User(String username, String email, List<String> notifications, String sharing, List<String> favoriteFuels) {
         this.username = username;
         this.email = email;
         this.notifications = notifications;
         this.sharing = sharing;
-        this.fuelTypes = fuelTypes;
+        this.favoriteFuels = favoriteFuels;
     }
 
-    public User(String username, String email, List<String> notifications, String sharing,List<String> fuelTypes, List<User> friends) {
-        this(username,email,notifications,sharing, fuelTypes);
+    public User(String username, String email, List<String> notifications, String sharing,List<String> favoriteFuels, List<String> friends) {
+        this(username,email,notifications,sharing, favoriteFuels);
         this.friends = friends;
     }
 
@@ -37,13 +37,12 @@ public class User implements Parcelable {
     }
 
     protected User(Parcel in) {
-        id = in.readString();
         username = in.readString();
         email = in.readString();
         notifications = in.createStringArrayList();
         sharing = in.readString();
-        friends = in.createTypedArrayList(User.CREATOR);
-        fuelTypes = in.createStringArrayList();
+        friends = in.createStringArrayList();
+        favoriteFuels = in.createStringArrayList();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -58,17 +57,9 @@ public class User implements Parcelable {
         }
     };
 
-    public String getId() {
-        return id;
-    }
-
-    public User setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public List<String> getFuelTypes() {
-        return fuelTypes;
+    @PropertyName("favorite_fuels")
+    public List<String> getFavoriteFuels() {
+        return favoriteFuels;
     }
 
     public List<String> getNotifications() {
@@ -87,7 +78,7 @@ public class User implements Parcelable {
         return email;
     }
 
-    public List<User> getFriends() {
+    public List<String> getFriends() {
         return friends;
     }
 
@@ -111,26 +102,26 @@ public class User implements Parcelable {
         return this;
     }
 
-    public User setFriends(List<User> friends) {
+    public User setFriends(List<String> friends) {
         this.friends = friends;
         return this;
     }
 
-    public User setFuelTypes(List<String> fuelTypes) {
-        this.fuelTypes = fuelTypes;
+    @PropertyName("favorite_fuels")
+    public User setFavoriteFuels(List<String> favoriteFuels) {
+        this.favoriteFuels = favoriteFuels;
         return this;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", notifications=" + notifications +
                 ", sharing='" + sharing + '\'' +
                 ", friends=" + friends +
-                ", fuelTypes=" + fuelTypes +
+                ", favoriteFuels=" + favoriteFuels +
                 '}';
     }
 
@@ -141,12 +132,11 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(id);
         parcel.writeString(username);
         parcel.writeString(email);
         parcel.writeStringList(notifications);
         parcel.writeString(sharing);
-        parcel.writeTypedList(friends);
-        parcel.writeStringList(fuelTypes);
+        parcel.writeStringList(friends);
+        parcel.writeStringList(favoriteFuels);
     }
 }

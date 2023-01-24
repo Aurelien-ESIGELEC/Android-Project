@@ -5,26 +5,19 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_project.data.models.fuel_price.Fuel;
-import com.example.android_project.data.models.user.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.Transaction;
 
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TimeZone;
 
 public class StationPriceRemoteDataSource {
 
@@ -36,6 +29,14 @@ public class StationPriceRemoteDataSource {
         db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     *
+     * @param user
+     * @param fuelType
+     * @param price
+     * @param stationId
+     * @return
+     */
     public MutableLiveData<Fuel> addPrice(String user, String fuelType, double price, String stationId) {
         MutableLiveData<Fuel> fuelMutableLiveData = new MutableLiveData<>();
 
@@ -69,7 +70,14 @@ public class StationPriceRemoteDataSource {
         return fuelMutableLiveData;
     }
 
-    public MutableLiveData<Fuel> addReview(Fuel fuel, String user, String newReview) {
+    /**
+     *
+     * @param fuel
+     * @param user
+     * @param newReview
+     * @return
+     */
+    public MutableLiveData<Fuel> updateReviewOnPrice(Fuel fuel, String user, String newReview) {
         MutableLiveData<Fuel> fuelMutableLiveData = new MutableLiveData<>();
 
 
@@ -79,7 +87,7 @@ public class StationPriceRemoteDataSource {
         db.runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(documentReference);
 
-            HashMap<String, String> reviews = snapshot.get("reviews", HashMap.class);
+            HashMap<String, Object> reviews = (HashMap<String, Object>) snapshot.get("reviews");
 
             Double reliabilityIndex = snapshot.getDouble("reliability_index");
 
@@ -87,26 +95,44 @@ public class StationPriceRemoteDataSource {
                 reviews = new HashMap<>();
             }
 
+            if (reviews.containsKey(user) && reviews.get(user) instanceof String &&!((String) reviews.get(user)).isEmpty()) {
+                String oldReview = (String) reviews.get(user);
 
-            if (reviews.containsKey(user)) {
-                String oldReview = reviews.get(user);
                 if (!oldReview.equals(newReview)) {
-                    if (oldReview.equals("up")) {
-                        reliabilityIndex -= 0.02;
-                    }
 
-                    if (oldReview.equals("down")) {
-                        reliabilityIndex += 0.02;
+                    if (newReview.isEmpty()) {
+                        if (oldReview.equals("up")) {
+                            reliabilityIndex -= 0.01;
+                        }
+
+                        if (oldReview.equals("down")) {
+                            reliabilityIndex += 0.1;
+                        }
+
+                        reviews.remove(user);
+                    } else {
+                        if (oldReview.equals("up")) {
+                            reliabilityIndex -= 0.11;
+                        }
+
+                        if (oldReview.equals("down")) {
+                            reliabilityIndex += 0.11;
+                        }
+
+                        reviews.put(user, newReview);
                     }
                 }
+
             } else {
+
                 if (newReview.equals("up")) {
                     reliabilityIndex += 0.01;
                 }
 
                 if (newReview.equals("down")) {
-                    reliabilityIndex -= 0.01;
+                    reliabilityIndex -= 0.1;
                 }
+
                 reviews.put(user, newReview);
             }
 
@@ -134,12 +160,20 @@ public class StationPriceRemoteDataSource {
     }
 
 
+    /**
+     *
+     * @param user
+     * @param stationId
+     * @param fuelType
+     * @return
+     */
     public MutableLiveData<List<Fuel>> getPricesOfStationsByFuel(String user, String stationId, String fuelType) {
         MutableLiveData<List<Fuel>> fuelMutableLiveData = new MutableLiveData<>();
 
         db.collection("price_users")
                 .whereEqualTo("fuel", fuelType)
                 .whereEqualTo("station_id", stationId)
+                .limit(10)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -150,6 +184,8 @@ public class StationPriceRemoteDataSource {
                             Map<String, Object> map = document.getData();
 
                             Fuel fuel = getFuelFromMap(map, user);
+
+                            fuel.setId(document.getId());
                             fuelPrice.add(fuel);
                             Log.d(TAG, "getPricesOfStationsByFuel: " + fuel);
                         }
@@ -163,12 +199,19 @@ public class StationPriceRemoteDataSource {
         return fuelMutableLiveData;
     }
 
+    /**
+     *
+     * @param map
+     * @param user
+     * @return
+     */
     private Fuel getFuelFromMap(Map<String, Object> map, String user)  {
         double price = 0;
         String userAdded = "";
         double reliabilityIndex = 0d;
         Timestamp timestamp = null;
         String fuelType = "";
+        String myReview = "";
 
         if (map.containsKey("price")) {
             price = Double.parseDouble(map.get("price").toString());
@@ -186,6 +229,13 @@ public class StationPriceRemoteDataSource {
             reliabilityIndex = Double.parseDouble(map.get("reliability_index").toString());
         }
 
+        if (map.containsKey("reviews")) {
+            HashMap<String, String> reviews = (HashMap<String, String>) map.get("reviews");
+            if (reviews.containsKey(user)) {
+                myReview = reviews.get(user);
+            }
+        }
+
         boolean canUpdate = reliabilityIndex < 10 && reliabilityIndex > 0 &&
                 !Objects.requireNonNull(user).isEmpty() &&
                 !user.equals(userAdded);
@@ -196,6 +246,7 @@ public class StationPriceRemoteDataSource {
 
         return new Fuel()
                 .setPrice(price)
+                .setMyReview(myReview)
                 .setName(fuelType)
                 .setCanUpdate(canUpdate)
                 .setReliabilityIndex(reliabilityIndex)
